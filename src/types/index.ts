@@ -153,7 +153,14 @@ export interface PriceListing {
 }
 
 export interface RepairVsReplace {
-  status: "AVAILABLE" | "NO_RELIABLE_PRICE_FOUND" | "PRICE_COMPARISON_UNAVAILABLE";
+  /** AVAILABLE = real listings found via search. ESTIMATE_ONLY = no specific
+   *  listing could be verified, so comparableReplacementPHP/priceRangePHP come
+   *  from a broader search-grounded category estimate (estimateSource: "search")
+   *  or, as a last resort when live search itself is unavailable, a static
+   *  per-template market range (estimateSource: "fallback") -- see
+   *  RepairTemplate.fallbackReplacementRangePHP. Either way this is clearly
+   *  labeled to the user as an estimate, never presented as a verified listing. */
+  status: "AVAILABLE" | "ESTIMATE_ONLY" | "NO_RELIABLE_PRICE_FOUND" | "PRICE_COMPARISON_UNAVAILABLE";
   itemName: string;
   /** Real LOCTITE pack price when known; otherwise a clearly-marked estimate. */
   repairCost: { amountPHP: number; isEstimate: boolean } | null;
@@ -164,6 +171,13 @@ export interface RepairVsReplace {
   listings: PriceListing[];
   priceRangePHP: [number, number] | null;
   searchTimestamp: string;
+  /** Only set when status is ESTIMATE_ONLY -- one short sentence explaining
+   *  where the range came from (a broader search, or the static fallback). */
+  estimateNote: string | null;
+  /** Only set when status is ESTIMATE_ONLY. "search" = Gemini still searched
+   *  the web for a general category range. "fallback" = live search itself
+   *  was unavailable/exhausted, so this is the template's static estimate. */
+  estimateSource: "search" | "fallback" | null;
 }
 
 // ----------------------------------------------------------------------------
@@ -238,6 +252,15 @@ export interface RepairTemplate {
    *  the user picks this template without uploading a photo -- keeps the
    *  Repair vs. Replace search from dead-ending on an oddly-worded query. */
   searchQuery: string;
+  /** Last-resort "Repair vs. Replace" fallback: a rough [low, high] PHP
+   *  market range for this category, used ONLY when live Gemini search
+   *  (both the specific listing search and the broader category-estimate
+   *  search) comes back with nothing usable. This is an author-supplied
+   *  general estimate, not verified/live data -- the UI always labels it
+   *  as such (RepairVsReplace.estimateSource === "fallback") and never
+   *  presents it as a real listing. Exists so a template-only flow never
+   *  dead-ends on a bare "price comparison unavailable" screen. */
+  fallbackReplacementRangePHP: [number, number];
 }
 
 // ----------------------------------------------------------------------------

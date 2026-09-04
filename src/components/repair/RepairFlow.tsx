@@ -221,22 +221,48 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
       const res = await fetch("/api/repair-search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemName, itemDescription: assessment.damage ?? undefined }),
+        body: JSON.stringify({
+          itemName,
+          itemDescription: assessment.damage ?? undefined,
+          // Last-resort fallback if live Gemini search is fully unavailable --
+          // only meaningful for template-only flows (see fallbackReplacementRangePHP).
+          fallbackRangePHP: picked?.fallbackReplacementRangePHP ?? null,
+        }),
       });
       const data = await res.json();
       const base: RepairVsReplace = data.repairVsReplace;
-      if (base.status === "AVAILABLE" && match?.product) {
+      if ((base.status === "AVAILABLE" || base.status === "ESTIMATE_ONLY") && match?.product) {
         base.repairCost = { amountPHP: getEstimatedRepairCostPHP(match.product), isEstimate: true };
         base.productPricePHP = null;
         base.potentialSavingsPHP = base.comparableReplacementPHP != null ? base.comparableReplacementPHP - base.repairCost.amountPHP : null;
       }
       setRvr(base);
     } catch {
-      setRvr({
-        status: "PRICE_COMPARISON_UNAVAILABLE", itemName: assessment.object || "item", repairCost: null,
-        productPricePHP: null, comparableReplacementPHP: null, potentialSavingsPHP: null, listings: [],
-        priceRangePHP: null, searchTimestamp: new Date().toISOString(),
-      });
+      // The fetch itself failed (network down, route unreachable) -- if this
+      // template has a static fallback range, still show an honest estimate
+      // rather than a dead end; only genuinely give up if there's nothing at
+      // all to show (non-template / no-photo-match flows).
+      const fallback = picked?.fallbackReplacementRangePHP;
+      if (fallback) {
+        const [low, high] = fallback;
+        const repairCost = match?.product ? { amountPHP: getEstimatedRepairCostPHP(match.product), isEstimate: true } : null;
+        const comparableReplacementPHP = Math.round((low + high) / 2);
+        setRvr({
+          status: "ESTIMATE_ONLY", itemName: assessment.object || picked?.title || "item", repairCost,
+          productPricePHP: null, comparableReplacementPHP,
+          potentialSavingsPHP: repairCost ? comparableReplacementPHP - repairCost.amountPHP : null,
+          listings: [], priceRangePHP: [low, high], searchTimestamp: new Date().toISOString(),
+          estimateNote: "Live price search was unavailable right now -- this is a general market range for this category, not a specific verified listing.",
+          estimateSource: "fallback",
+        });
+      } else {
+        setRvr({
+          status: "PRICE_COMPARISON_UNAVAILABLE", itemName: assessment.object || "item", repairCost: null,
+          productPricePHP: null, comparableReplacementPHP: null, potentialSavingsPHP: null, listings: [],
+          priceRangePHP: null, searchTimestamp: new Date().toISOString(),
+          estimateNote: null, estimateSource: null,
+        });
+      }
     } finally {
       if (rvrProgressTimer.current) {
         window.clearInterval(rvrProgressTimer.current);
@@ -633,7 +659,7 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
               <div className="font-heading font-black text-3xl tabular-nums">{Math.round(rvrProgress)}%</div>
               <div className="text-neutral-600 text-sm">Searching for comparable prices&#8230;</div>
             </div>
-          ) : rvr?.status === "AVAILABLE" ? (
+          ) : rvr?.status === "AVAILABLE" || rvr?.status === "ESTIMATE_ONLY" ? (
             <>
               <div className="grid sm:grid-cols-2 mt-6 border-y-2 border-text">
                 <div className="border-r-0 sm:border-r-2 border-text">
@@ -652,16 +678,22 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
                 </div>
                 <div>
                   <div className="relative aspect-square bg-neutral-200 overflow-hidden">
-                    {rvr.listings[0]?.imageUrl ? (
+                    {rvr.status === "AVAILABLE" && rvr.listings[0]?.imageUrl ? (
                       <img src={rvr.listings[0].imageUrl} alt={rvr.listings[0].listingTitle} className="absolute inset-0 w-full h-full object-cover" />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-xs text-neutral-500 px-4 text-center">No photo found online</div>
+                      <div className="absolute inset-0 flex items-center justify-center text-xs text-neutral-500 px-4 text-center">
+                        {rvr.status === "ESTIMATE_ONLY" ? "General market estimate — no single listing photo" : "No photo found online"}
+                      </div>
                     )}
-                    <div className="absolute top-0 left-0 bg-accent text-white px-3 py-2 font-heading font-black text-[10px] tracking-[0.16em]">FOUND ONLINE</div>
+                    <div className={`absolute top-0 left-0 text-white px-3 py-2 font-heading font-black text-[10px] tracking-[0.16em] ${rvr.status === "ESTIMATE_ONLY" ? "bg-[#b26a00]" : "bg-accent"}`}>
+                      {rvr.status === "ESTIMATE_ONLY" ? "MARKET ESTIMATE" : "FOUND ONLINE"}
+                    </div>
                   </div>
                   <div className="p-4 border-t-2 border-text sm:border-l-0">
                     <div className="font-heading font-extrabold text-[10px] tracking-[0.16em] text-neutral-600">NAME:</div>
-                    <div className="font-heading font-black text-base uppercase">{rvr.listings[0]?.listingTitle ?? "No comparable listing found"}</div>
+                    <div className="font-heading font-black text-base uppercase">
+                      {rvr.status === "ESTIMATE_ONLY" ? (assessment?.object || picked?.title || "Comparable item") : (rvr.listings[0]?.listingTitle ?? "No comparable listing found")}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -674,9 +706,14 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
                 <div className="p-6 sm:p-10 bg-neutral-200">
                   <div className="font-heading font-black text-xs tracking-[0.2em] text-neutral-600">REPLACE</div>
                   <div className="font-heading font-black text-5xl sm:text-7xl tracking-[-0.04em] mt-3 text-accent">&#8369;{rvr.comparableReplacementPHP}</div>
-                  <div className="font-heading font-extrabold text-[11px] tracking-[0.14em] text-neutral-600 mt-2.5">COMPARABLE ITEM</div>
+                  <div className="font-heading font-extrabold text-[11px] tracking-[0.14em] text-neutral-600 mt-2.5">{rvr.status === "ESTIMATE_ONLY" ? "MARKET ESTIMATE" : "COMPARABLE ITEM"}</div>
                 </div>
               </div>
+              {rvr.status === "ESTIMATE_ONLY" && (
+                <div className="px-5 sm:px-10 py-4 border-b-2 border-text bg-neutral-100 text-xs text-neutral-700">
+                  {rvr.estimateNote ?? "General market range for this category — not a specific live listing."}
+                </div>
+              )}
               {rvr.potentialSavingsPHP != null && rvr.potentialSavingsPHP > 0 && (
                 <div className="bg-accent text-white p-6 sm:p-10 flex flex-wrap items-baseline gap-3.5">
                   <span className="font-heading font-black text-lg tracking-[0.16em]">YOU COULD SAVE</span>
@@ -689,13 +726,16 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
                 </div>
                 {detailsOpen && (
                   <div className="border-2 border-divider p-4 flex flex-col gap-3">
-                    <div className="font-heading font-black text-[10px] tracking-[0.18em] text-neutral-600">LISTINGS FOUND &middot; LIVE SEARCH</div>
+                    <div className="font-heading font-black text-[10px] tracking-[0.18em] text-neutral-600">
+                      {rvr.status === "ESTIMATE_ONLY" ? "MARKET ESTIMATE · NOT INDIVIDUAL LISTINGS" : "LISTINGS FOUND · LIVE SEARCH"}
+                    </div>
                     {rvr.listings.map((l) => (
                       <a key={l.sourceUrl} href={l.sourceUrl} target="_blank" rel="noopener noreferrer" className="flex justify-between gap-3 border-t-2 border-divider pt-2.5 text-[13px] font-bold hover:text-accent">
                         <span>{l.shopName} ({l.sourceDomain})</span><span>&#8369;{l.price}</span>
                       </a>
                     ))}
                     {rvr.priceRangePHP && <div className="font-heading font-black text-[11px] tracking-[0.14em]">ESTIMATED MARKET RANGE: &#8369;{rvr.priceRangePHP[0]}&#8211;&#8369;{rvr.priceRangePHP[1]}</div>}
+                    {rvr.status === "ESTIMATE_ONLY" && rvr.estimateNote && <div className="text-xs text-neutral-700">{rvr.estimateNote}</div>}
                     <div className="text-xs text-neutral-700">Repair figure is a per-repair estimate, not a verified pack price — see task.md.</div>
                   </div>
                 )}

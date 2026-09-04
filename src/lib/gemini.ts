@@ -5,7 +5,12 @@
 // Two entry points:
 //  - callGeminiVision: image + text -> JSON-forced text response (damage detection).
 //  - callGeminiSearch: Google-Search-grounded text response w/ citations (live PH
-//    pricing for Repair vs. Replace / Buy Online).
+//    pricing for Repair vs. Replace / Buy Online). Request/response shape follows
+//    https://ai.google.dev/gemini-api/docs/google-search (tools: [{ google_search: {} }],
+//    groundingMetadata.groundingChunks[].web.uri for citations). Callers (see
+//    /api/repair-search) chain multiple callGeminiSearch invocations of increasing
+//    breadth -- specific listing, broadened category, then a pure price-estimate
+//    query -- so a narrow first search never dead-ends the whole flow.
 // ============================================================================
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
@@ -122,7 +127,7 @@ export async function callGeminiSearch(
       tools: [{ google_search: {} }],
       generationConfig: {
         temperature: 0.2,
-        maxOutputTokens: opts.maxTokens ?? 1500,
+        maxOutputTokens: opts.maxTokens ?? 2048,
         thinkingConfig: { thinkingBudget: 0 },
       },
     }),
