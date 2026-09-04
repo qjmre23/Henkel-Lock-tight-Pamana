@@ -41,15 +41,54 @@ function env(name: string): string | undefined {
   }
 }
 
-const TOKEN_SHAPE = /^\d{5,}:[A-Za-z0-9_-]{20,}$/;
+const TOKEN_SHAPE = /^\d{5,}:[A-Za-z0-9_-]{20,}$/;   // 8123456789:AAF...
+const CHAT_SHAPE = /^(-?\d{4,}|@[A-Za-z][A-Za-z0-9_]{4,})$/; // numeric id, or @publicchannel
 
-/** Reads both configured vars and auto-corrects if the two values are swapped. */
-function readConfig(): { token?: string; chatId?: string } {
-  const a = env("locktight_dashboard") ?? env("LOCKTIGHT_DASHBOARD") ?? env("TELEGRAM_BOT_TOKEN");
-  const b = env("metrics_tag") ?? env("METRICS_TAG") ?? env("TELEGRAM_CHAT_ID");
-  if (a && TOKEN_SHAPE.test(a)) return { token: a, chatId: b };
-  if (b && TOKEN_SHAPE.test(b)) return { token: b, chatId: a };
-  return { token: a, chatId: b };
+// Every variable name this project has used for the two Telegram values.
+// Which value lives under which name has changed more than once, so instead of
+// trusting the name we read them all and classify by SHAPE: a bot token always
+// looks like "<digits>:<base64ish>", a chat id is numeric (or @channel).
+const CANDIDATE_NAMES = [
+  "notifieer_tag", "NOTIFIEER_TAG",
+  "metrics_tag", "METRICS_TAG",
+  "locktight_dashboard", "LOCKTIGHT_DASHBOARD",
+  "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID",
+];
+
+interface ResolvedConfig {
+  token?: string;
+  chatId?: string;
+  tokenVar?: string;
+  chatIdVar?: string;
+  foundVars: string[];
+}
+
+function readConfig(): ResolvedConfig {
+  const found: { name: string; value: string }[] = [];
+  for (const n of CANDIDATE_NAMES) {
+    const v = env(n);
+    if (v && !found.some((f) => f.value === v)) found.push({ name: n, value: v });
+  }
+
+  let token: string | undefined, tokenVar: string | undefined;
+  for (const f of found) {
+    if (!token && TOKEN_SHAPE.test(f.value)) { token = f.value; tokenVar = f.name; }
+  }
+
+  let chatId: string | undefined, chatIdVar: string | undefined;
+  for (const f of found) {
+    if (f.name === tokenVar) continue;
+    if (!chatId && CHAT_SHAPE.test(f.value)) { chatId = f.value; chatIdVar = f.name; }
+  }
+  // Last resort: any remaining value that is not the token, so a malformed
+  // chat id still reaches Telegram and surfaces a real error via /__vn-test
+  // instead of failing silently here.
+  if (!chatId) {
+    for (const f of found) {
+      if (f.name !== tokenVar) { chatId = f.value; chatIdVar = f.name; break; }
+    }
+  }
+  return { token, chatId, tokenVar, chatIdVar, foundVars: found.map((f) => f.name) };
 }
 
 function deviceClass(ua: string): string {
@@ -117,17 +156,20 @@ async function send(token: string, chatId: string, text: string): Promise<{ ok: 
 
 export default async (request: Request, context: Context): Promise<Response | void> => {
   const url = new URL(request.url);
-  const { token, chatId } = readConfig();
+  const cfg = readConfig();
+  const { token, chatId } = cfg;
 
   // ---- diagnostics (no secret values are ever returned) --------------------
   if (url.pathname === "/__vn-status") {
     return Response.json({
       edgeFunction: "running",
+      foundVars: cfg.foundVars,          // names only, never values
+      tokenVar: cfg.tokenVar ?? null,
+      chatIdVar: cfg.chatIdVar ?? null,
       hasToken: !!token,
       tokenLooksValid: token ? TOKEN_SHAPE.test(token) : false,
       hasChatId: !!chatId,
-      chatIdIsNumeric: chatId ? /^-?\d+$/.test(chatId) : false,
-      chatIdLooksLikeUsername: chatId ? /^@?[A-Za-z_]/.test(chatId) : false,
+      chatIdLooksValid: chatId ? CHAT_SHAPE.test(chatId) : false,
       geo: place(context),
       time: manilaTime(new Date()),
     });
