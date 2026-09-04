@@ -46,3 +46,7 @@ next-env.d.ts
 
 # scratch: candidate product images downloaded for manual review, never committed
 _img_preview/
+
+# build/demo video output + transfer scratch
+final-polished-demo.mp4
+_to_delete/
