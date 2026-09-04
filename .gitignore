@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local build verification scratch (temp distDir override, never committed)
+.next-verify/

@@ -6,7 +6,27 @@
   package = "@netlify/plugin-nextjs"
 
 # Route Handlers under src/app/api/** run as Netlify Functions automatically
-# via the Next.js Runtime plugin above -- GROK_API_KEY / ELEVENLABS_API_KEY
+# via the Next.js Runtime plugin above -- GEMINI_API_KEY / ELEVENLABS_API_KEY
 # are read there server-side and are never bundled into client code.
 # Set the same env vars in Netlify Site settings -> Environment variables
 # (Production + Deploy previews + Branch deploys).
+
+[build.environment]
+  # Netlify's secret scanner flags any string in the build output that
+  # matches a configured env var's literal value -- including files that
+  # were never actually shipped to the browser. Without these two lines,
+  # every production build fails at the "Scanning for secrets" step even
+  # though nothing is actually leaking. See:
+  # https://docs.netlify.com/build/environment-variables/secrets-controller/
+  #
+  # 1) Turbopack's own persistent build cache (.netlify/.next/cache/**,
+  #    .next/cache/**) stores raw source/build state for faster rebuilds.
+  #    It is build-time-only tooling data, never served to visitors, so it's
+  #    safe -- and necessary -- to exclude from the scan.
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"
+  # 2) NEXT_PUBLIC_* vars are *meant* to be public -- Next.js inlines them
+  #    into the client bundle by design (that's what the NEXT_PUBLIC_ prefix
+  #    means), so their appearance in shipped JS is correct, not a leak.
+  #    True secrets (GEMINI_API_KEY, ELEVENLABS_API_KEY) are deliberately
+  #    NOT listed here, so the scanner keeps checking for those.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_MAPBOX_TOKEN,NEXT_PUBLIC_MAPBOX_STYLE,NEXT_PUBLIC_SITE_URL"

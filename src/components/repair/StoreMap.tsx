@@ -33,11 +33,7 @@ export default function StoreMap({ stores }: { stores: MapStore[] }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (!MAPBOX_TOKEN) {
-      setError("Mapbox token is not configured (NEXT_PUBLIC_MAPBOX_TOKEN).");
-      return;
-    }
-    if (!containerRef.current || mapRef.current) return;
+    if (!MAPBOX_TOKEN || !containerRef.current || mapRef.current) return;
     let cancelled = false;
 
     import("mapbox-gl")
@@ -83,6 +79,14 @@ export default function StoreMap({ stores }: { stores: MapStore[] }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!MAPBOX_TOKEN) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-xs text-neutral-600 bg-neutral-300">
+        Map unavailable: Mapbox token is not configured (NEXT_PUBLIC_MAPBOX_TOKEN).
+      </div>
+    );
+  }
 
   if (error) {
     return (

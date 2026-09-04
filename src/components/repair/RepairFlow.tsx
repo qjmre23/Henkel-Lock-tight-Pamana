@@ -199,6 +199,11 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
     // -- it never claims 100% until the fetch actually resolves, so the ring
     // stays honest (accurate) rather than just looking busy. ~4.5s to reach
     // 92% keeps it feeling deliberate rather than instant/fake.
+    //
+    // Date.now() below only ever runs inside this user-triggered event
+    // handler (never during render), so it can't produce the render-time
+    // instability react-hooks/purity guards against.
+    // eslint-disable-next-line react-hooks/purity
     const startedAt = Date.now();
     const RAMP_MS = 4500;
     rvrProgressTimer.current = window.setInterval(() => {
