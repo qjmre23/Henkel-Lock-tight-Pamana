@@ -339,14 +339,21 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
               </button>
             ))}
             {minis.map((m) => (
-              <button key={m.id} onClick={() => { setPickedId(m.id); setDamageChoice(null); }} className={`text-left p-4 flex flex-col justify-between gap-4 min-h-[120px] border-r-2 border-b-2 ${picked?.id === m.id ? "border-accent bg-neutral-200" : "border-divider hover:bg-neutral-200"}`}>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="font-heading font-black text-[10px] tracking-[0.14em] opacity-45">{m.community}</div>
-                  <div className="flex items-center gap-1 font-heading font-black text-[10px] tracking-[0.14em] text-accent-700">
+              <button key={m.id} onClick={() => { setPickedId(m.id); setDamageChoice(null); }} className={`text-left flex flex-col border-r-2 border-b-2 ${picked?.id === m.id ? "border-accent bg-neutral-200" : "border-divider hover:bg-neutral-200"}`}>
+                <div className="relative aspect-[4/3] bg-neutral-200 flex items-center justify-center overflow-hidden">
+                  {m.imageUrl ? (
+                    <img src={m.imageUrl} alt={m.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[11px] text-neutral-500 px-4 text-center">{m.imagePlaceholder}</span>
+                  )}
+                  <div className="absolute top-0 left-0 bg-text text-bg px-2.5 py-1.5 font-heading font-black text-[10px] tracking-[0.14em]">{m.community}</div>
+                </div>
+                <div className="p-4 flex flex-1 flex-col justify-between gap-3">
+                  <div className="font-heading font-extrabold text-[15px] uppercase">{m.title}</div>
+                  <div className="flex items-center gap-1 font-heading font-black text-[11px] tracking-[0.14em] text-accent-700">
                     {picked?.id === m.id ? "SELECTED" : "START"} <span>&#8594;</span>
                   </div>
                 </div>
-                <div className="font-heading font-extrabold text-[15px] uppercase">{m.title}</div>
               </button>
             ))}
           </div>
