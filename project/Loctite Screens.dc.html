@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-4b87b5b6-a474-4247-85ca-a5e1d5d79e23/styles.css">
+<script src="_ds/modernist-4b87b5b6-a474-4247-85ca-a5e1d5d79e23/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+@keyframes lqRise { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:none; } }
+@keyframes lqSweep { 0% { top:0; } 100% { top:100%; } }
+@keyframes lqRing { 0%,100% { opacity:.35; transform:scale(1); } 50% { opacity:1; transform:scale(1.04); } }
+@keyframes lqTick { 0% { width:4%; } 100% { width:96%; } }
+@keyframes lqMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; transition-duration: .001s !important; }
+}
+a { color: var(--color-accent-700); }
+a:hover { color: var(--color-accent); }
+image-slot { display:block; }
+</style>
+</helmet>
+<div style="container-type:inline-size;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);min-height:100%">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px;border-bottom:2px solid var(--color-text);background:var(--color-bg);position:sticky;top:0;z-index:20">
+    <div style="display:flex;align-items:center;gap:12px;cursor:pointer" onClick="{{ goHome }}">
+      <div style="width:26px;height:26px;background:var(--color-accent)"></div>
+      <div style="font:900 13px/1 var(--font-heading);letter-spacing:.14em;white-space:nowrap">LOCTITE<span style="opacity:.45"> / PH REPAIR</span></div>
+    </div>
+    <sc-if value="{{ notHome }}">
+      <button style="all:unset;cursor:pointer;font:800 10px/1 var(--font-heading);letter-spacing:.18em;color:var(--color-neutral-600);white-space:nowrap" style-hover="color:var(--color-accent)" onClick="{{ goHome }}">&#8592; START OVER</button>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div style="animation:lqRise .45s cubic-bezier(.2,.8,.2,1) both">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));border-bottom:2px solid var(--color-text)">
+        <div style="container-type:inline-size;padding:clamp(24px,5cqw,64px);display:flex;flex-direction:column;justify-content:flex-end;gap:22px;min-height:52cqw;border-right:2px solid var(--color-text)">
+          <div style="display:inline-flex;align-items:center;gap:8px;font:800 11px/1 var(--font-heading);letter-spacing:.18em;color:var(--color-accent-700)">
+            <span style="width:8px;height:8px;background:var(--color-accent);display:block"></span>PROTOTYPE / DEMO DATA
+          </div>
+          <h1 style="margin:0;font:900 clamp(38px,11cqw,104px)/.88 var(--font-heading);letter-spacing:-.03em;text-transform:uppercase;text-wrap:balance">Something<br>broke?</h1>
+          <p style="margin:0;font:500 clamp(15px,2.1cqw,21px)/1.35 var(--font-body);max-width:26ch;color:var(--color-neutral-700)">Don't throw it yet. Let's see if it can be fixed.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:12px">
+            <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:18px 26px;font:900 clamp(13px,1.7cqw,16px)/1 var(--font-heading);letter-spacing:.12em;display:inline-flex;align-items:center;gap:14px" style-hover="background:var(--color-accent-600)" onClick="{{ goGallery }}">TRY A REPAIR <span style="font-size:1.2em">&#8594;</span></button>
+            <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:18px 26px;font:900 clamp(13px,1.7cqw,16px)/1 var(--font-heading);letter-spacing:.12em;display:inline-flex;align-items:center;gap:14px" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ arm }}">UPLOAD YOUR ITEM <span style="font-size:1.2em">&#8593;</span></button>
+          </div>
+        </div>
+        <div style="position:relative;min-height:52cqw;background:var(--color-neutral-300);overflow:hidden">
+          <div style="{{ trackStyle }}">
+            <div style="position:relative;width:33.3333%;flex:none"><image-slot id="{{ heroSlot1 }}" shape="rect" fit="cover" placeholder="Photo 1 — broken sneaker"></image-slot></div>
+            <div style="position:relative;width:33.3333%;flex:none"><image-slot id="{{ heroSlot2 }}" shape="rect" fit="cover" placeholder="Photo 2 — cracked phone case"></image-slot></div>
+            <div style="position:relative;width:33.3333%;flex:none"><image-slot id="{{ heroSlot3 }}" shape="rect" fit="cover" placeholder="Photo 3 — cosplay prop"></image-slot></div>
+          </div>
+          <div style="position:absolute;left:16px;bottom:16px;display:flex;gap:6px;z-index:3">
+            <sc-for list="{{ dots }}" as="d" hint-placeholder-count="3">
+              <button style="{{ d.style }}" onClick="{{ d.onClick }}"></button>
+            </sc-for>
+          </div>
+          <div style="position:absolute;right:0;top:0;background:var(--color-accent);color:#fff;padding:10px 14px;font:900 11px/1 var(--font-heading);letter-spacing:.16em;pointer-events:none;z-index:3">FIXABLE?</div>
+          <sc-if value="{{ armed }}">
+            <div style="position:absolute;inset:0;background:rgba(32,30,29,.62);display:grid;place-items:center;z-index:4;animation:lqRise .28s ease both">
+              <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:22px 34px;font:900 clamp(16px,3cqw,26px)/1 var(--font-heading);letter-spacing:.06em;text-transform:uppercase;box-shadow:0 0 0 4px rgba(236,48,19,.28);animation:lqRing 2s ease-in-out infinite" style-hover="background:#fff;color:var(--color-accent)" onClick="{{ goScan }}">Let's Lock it!</button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <div style="background:var(--color-accent);color:#fff;overflow:hidden;border-bottom:2px solid var(--color-text)">
+        <div style="display:flex;width:max-content;animation:lqMarquee 22s linear infinite;font:900 clamp(15px,2.4cqw,26px)/1 var(--font-heading);letter-spacing:.04em;padding:14px 0;text-transform:uppercase">
+          <span style="padding-right:28px">Sole separation</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Cracked case</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Snapped prop</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Torn strap</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Broken clip</span><span style="padding-right:28px">&#9679;</span>
+          <span style="padding-right:28px">Sole separation</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Cracked case</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Snapped prop</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Torn strap</span><span style="padding-right:28px">&#9679;</span><span style="padding-right:28px">Broken clip</span><span style="padding-right:28px">&#9679;</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:clamp(14px,3cqw,40px);padding:22px clamp(20px,4cqw,48px);border-bottom:2px solid var(--color-divider)">
+        <div style="font:900 11px/1 var(--font-heading);letter-spacing:.18em;opacity:.5">YOUR REPAIRS</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px;border:2px solid var(--color-text);padding:8px 14px;font:800 12px/1 var(--font-heading);letter-spacing:.1em"><span style="font-size:18px">&#128095;</span>SNEAKER</div>
+          <div style="display:flex;align-items:center;gap:8px;border:2px solid var(--color-text);padding:8px 14px;font:800 12px/1 var(--font-heading);letter-spacing:.1em"><span style="font-size:18px">&#127890;</span>BACKPACK</div>
+          <div style="display:flex;align-items:center;gap:8px;border:2px solid var(--color-text);padding:8px 14px;font:800 12px/1 var(--font-heading);letter-spacing:.1em"><span style="font-size:18px">&#127912;</span>COSPLAY PROP</div>
+        </div>
+        <div style="font:900 12px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent-700)">WHAT ARE WE FIXING NEXT?</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isGallery }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both">
+      <div style="padding:clamp(20px,4cqw,44px) clamp(20px,4cqw,48px) 18px">
+        <h2 style="margin:0 0 6px;font:900 clamp(28px,6cqw,58px)/.92 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">Pick what broke</h2>
+        <p style="margin:0;font:500 15px/1.3 var(--font-body);color:var(--color-neutral-700)">{{ countLabel }}</p>
+      </div>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:0 clamp(20px,4cqw,48px) 18px;border-bottom:2px solid var(--color-text);scrollbar-width:thin">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6">
+          <button style="{{ c.style }}" onClick="{{ c.onClick }}">{{ c.label }}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ hasPick }}">
+        <div style="border-bottom:2px solid var(--color-text);background:var(--color-neutral-200);animation:lqRise .34s cubic-bezier(.2,.8,.2,1) both">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+            <div style="position:relative;aspect-ratio:4/3;background:var(--color-neutral-300);border-right:2px solid var(--color-text)">
+              <image-slot id="{{ itemSlot }}" shape="rect" fit="cover" placeholder="{{ itemPh }}"></image-slot>
+              <div style="position:absolute;top:0;left:0;background:var(--color-accent);color:#fff;padding:8px 12px;font:900 10px/1 var(--font-heading);letter-spacing:.16em;pointer-events:none">{{ itemCat }}</div>
+            </div>
+            <div style="container-type:inline-size;padding:clamp(20px,4cqw,40px);display:flex;flex-direction:column;gap:18px">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px">
+                <h3 style="margin:0;font:900 clamp(24px,7cqw,44px)/.94 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">{{ itemTitle }}</h3>
+                <button style="all:unset;cursor:pointer;flex:none;width:34px;height:34px;display:grid;place-items:center;border:2px solid var(--color-text);font:900 15px/1 var(--font-heading)" style-hover="background:var(--color-accent);border-color:var(--color-accent);color:#fff" onClick="{{ clearPick }}">&#10005;</button>
+              </div>
+              <div style="border-top:2px solid var(--color-text);padding-top:16px;font:900 12px/1 var(--font-heading);letter-spacing:.18em">WHAT HAPPENED?</div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px">
+                <sc-for list="{{ damages }}" as="d" hint-placeholder-count="5">
+                  <button style="{{ d.style }}" onClick="{{ d.onClick }}">{{ d.label }}</button>
+                </sc-for>
+              </div>
+              <button style="{{ startStyle }}" onClick="{{ goDetect }}">START REPAIR &#8594;</button>
+              <div style="font:500 12px/1.4 var(--font-body);color:var(--color-neutral-600)">{{ startHint }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+        <sc-for list="{{ flagships }}" as="t" hint-placeholder-count="8">
+          <div style="{{ t.cardStyle }}" style-hover="background:var(--color-neutral-200)" onClick="{{ t.onClick }}">
+            <div style="position:relative;aspect-ratio:4/3;background:var(--color-neutral-200)">
+              <image-slot id="{{ t.slot }}" shape="rect" fit="cover" placeholder="{{ t.ph }}"></image-slot>
+              <div style="position:absolute;top:0;left:0;background:var(--color-text);color:var(--color-bg);padding:6px 10px;font:900 10px/1 var(--font-heading);letter-spacing:.14em;pointer-events:none">{{ t.cat }}</div>
+            </div>
+            <div style="padding:16px 16px 18px;display:flex;flex-direction:column;gap:8px">
+              <div style="font:900 clamp(16px,2.1cqw,20px)/1.05 var(--font-heading);letter-spacing:-.01em;text-transform:uppercase">{{ t.title }}</div>
+              <div style="font:500 13px/1.3 var(--font-body);color:var(--color-neutral-700)">{{ t.note }}</div>
+              <div style="{{ t.ctaStyle }}">{{ t.cta }} <span>&#8594;</span></div>
+            </div>
+          </div>
+        </sc-for>
+        <sc-for list="{{ minis }}" as="m" hint-placeholder-count="8">
+          <div style="{{ m.cardStyle }}" style-hover="background:var(--color-neutral-200)" onClick="{{ m.onClick }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <div style="font:900 10px/1 var(--font-heading);letter-spacing:.14em;opacity:.45">{{ m.cat }}</div>
+              <div style="width:22px;height:22px;border:2px solid var(--color-neutral-400);display:grid;place-items:center;font:900 12px/1 var(--font-heading);color:var(--color-neutral-600)">+</div>
+            </div>
+            <div style="font:800 15px/1.1 var(--font-heading);text-transform:uppercase">{{ m.title }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isExpand }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div style="position:relative;min-height:46cqw;background:var(--color-neutral-200);border-right:2px solid var(--color-text)">
+        <image-slot id="{{ itemSlot }}" shape="rect" fit="cover" placeholder="Drop the item photo"></image-slot>
+        <div style="position:absolute;top:0;left:0;background:var(--color-accent);color:#fff;padding:8px 12px;font:900 10px/1 var(--font-heading);letter-spacing:.16em;pointer-events:none">{{ itemCat }}</div>
+      </div>
+      <div style="padding:clamp(22px,4cqw,44px);display:flex;flex-direction:column;gap:22px">
+        <button style="all:unset;cursor:pointer;font:800 11px/1 var(--font-heading);letter-spacing:.16em;opacity:.55;width:max-content" style-hover="opacity:1" onClick="{{ goGallery }}">&#8592; ALL TEMPLATES</button>
+        <h2 style="margin:0;font:900 clamp(28px,5.5cqw,54px)/.92 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">{{ itemTitle }}</h2>
+        <div style="border-top:2px solid var(--color-text);padding-top:18px;font:900 13px/1 var(--font-heading);letter-spacing:.16em">WHAT HAPPENED?</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ damages }}" as="d" hint-placeholder-count="5">
+            <button style="{{ d.style }}" onClick="{{ d.onClick }}">{{ d.label }}</button>
+          </sc-for>
+        </div>
+        <button style="{{ startStyle }}" onClick="{{ goDetect }}">START REPAIR &#8594;</button>
+        <div style="font:500 12px/1.4 var(--font-body);color:var(--color-neutral-600)">{{ startHint }}</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isUpload }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;padding:clamp(24px,5cqw,64px) clamp(20px,4cqw,48px);display:flex;flex-direction:column;gap:26px">
+      <h2 style="margin:0;font:900 clamp(28px,6cqw,58px)/.92 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">Show us the damage</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;background:var(--color-text);border:2px solid var(--color-text)">
+        <button style="all:unset;cursor:pointer;background:var(--color-bg);padding:clamp(28px,5cqw,56px) 24px;display:flex;flex-direction:column;gap:16px;min-height:200px;justify-content:space-between" style-hover="background:var(--color-accent);color:#fff" onClick="{{ goScan }}">
+          <span style="font-size:34px">&#128247;</span>
+          <span style="font:900 clamp(15px,2.2cqw,22px)/1 var(--font-heading);letter-spacing:.06em">TAKE A PHOTO</span>
+        </button>
+        <button style="all:unset;cursor:pointer;background:var(--color-bg);padding:clamp(28px,5cqw,56px) 24px;display:flex;flex-direction:column;gap:16px;min-height:200px;justify-content:space-between" style-hover="background:var(--color-accent);color:#fff" onClick="{{ goScan }}">
+          <span style="font-size:34px">&#128194;</span>
+          <span style="font:900 clamp(15px,2.2cqw,22px)/1 var(--font-heading);letter-spacing:.06em">UPLOAD PHOTO</span>
+        </button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font:500 13px/1.4 var(--font-body);color:var(--color-neutral-700)"><span style="width:8px;height:8px;background:var(--color-accent);display:block;flex:none"></span>One photo is enough. We'll find the damage.</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isScan }}">
+    <div style="padding:clamp(24px,5cqw,64px) clamp(20px,4cqw,48px);display:flex;flex-direction:column;gap:24px">
+      <div style="position:relative;aspect-ratio:4/3;background:var(--color-neutral-200);border:2px solid var(--color-text);overflow:hidden">
+        <image-slot id="{{ itemSlot }}" shape="rect" fit="cover" placeholder="Drop the item photo"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(var(--color-accent),transparent 60%);opacity:.14;pointer-events:none"></div>
+        <div style="position:absolute;left:0;right:0;height:3px;background:var(--color-accent);box-shadow:0 0 24px var(--color-accent);animation:lqSweep 1.1s linear infinite;pointer-events:none"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font:900 clamp(20px,3.4cqw,34px)/1 var(--font-heading);letter-spacing:.1em">SCANNING&#8230;</div>
+        <div style="height:8px;background:var(--color-neutral-300)"><div style="height:100%;background:var(--color-accent);animation:lqTick 1.8s cubic-bezier(.3,.8,.2,1) forwards"></div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isDetect }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;padding:clamp(20px,4cqw,48px);display:flex;flex-direction:column;gap:22px">
+      <div style="position:relative;aspect-ratio:4/3;background:var(--color-neutral-200);border:2px solid var(--color-text)">
+        <image-slot id="{{ itemSlot }}" shape="rect" fit="cover" placeholder="Drop the item photo"></image-slot>
+        <svg viewBox="0 0 100 75" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
+          <ellipse cx="46" cy="55" rx="26" ry="12" fill="none" stroke="#ec3013" stroke-width="1.1" vector-effect="non-scaling-stroke" style="animation:lqRing 2.4s ease-in-out infinite;transform-origin:46px 55px"></ellipse>
+          <line x1="72" y1="55" x2="88" y2="34" stroke="#ec3013" stroke-width="1.1" vector-effect="non-scaling-stroke"></line>
+        </svg>
+        <div style="position:absolute;right:8px;top:16px;background:var(--color-accent);color:#fff;padding:8px 12px;font:900 11px/1 var(--font-heading);letter-spacing:.14em;pointer-events:none">DAMAGE HERE</div>
+        <div style="position:absolute;left:0;bottom:0;background:var(--color-text);color:var(--color-bg);padding:10px 14px;font:900 11px/1 var(--font-heading);letter-spacing:.14em;pointer-events:none">DETECTED: SNEAKER &#183; RUBBER + FABRIC</div>
+      </div>
+      <div style="border-top:2px solid var(--color-text);padding-top:20px;display:flex;flex-direction:column;gap:18px">
+        <div style="font:900 clamp(22px,4cqw,40px)/.96 var(--font-heading);letter-spacing:-.01em;text-transform:uppercase">{{ detectLabel }} &#8212; did we get it right?</div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:16px 28px;font:900 14px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-accent-600)" onClick="{{ goDescribe }}">YES</button>
+          <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:16px 28px;font:900 14px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ goCorrect }}">NOT QUITE</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isCorrect }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;padding:clamp(24px,5cqw,56px) clamp(20px,4cqw,48px);display:flex;flex-direction:column;gap:22px">
+      <h2 style="margin:0;font:900 clamp(24px,4.6cqw,44px)/.95 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">Then what happened?</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <sc-for list="{{ damages }}" as="d" hint-placeholder-count="5">
+          <button style="{{ d.style }}" onClick="{{ d.onClick }}">{{ d.label }}</button>
+        </sc-for>
+      </div>
+      <button style="{{ startStyle }}" onClick="{{ goDescribe }}">CONFIRM &#8594;</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isDescribe }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;padding:clamp(24px,5cqw,56px) clamp(20px,4cqw,48px);display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="width:34px;height:34px;background:var(--color-accent);color:#fff;display:grid;place-items:center;font:900 16px/1 var(--font-heading);flex:none">&#10003;</span>
+        <span style="font:900 12px/1 var(--font-heading);letter-spacing:.16em">{{ detectLabel }} CONFIRMED</span>
+      </div>
+      <h2 style="margin:0;font:900 clamp(26px,5cqw,48px)/.94 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">What's wrong with it?</h2>
+      <input value="{{ text }}" onChange="{{ setText }}" placeholder="natanggal yung sole" style="width:100%;box-sizing:border-box;border:2px solid var(--color-text);background:transparent;padding:20px;font:500 clamp(16px,2.4cqw,22px)/1.2 var(--font-body);color:var(--color-text);border-radius:0" style-focus="outline:2px solid var(--color-accent);outline-offset:2px">
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ phrases }}" as="p" hint-placeholder-count="4">
+          <button style="all:unset;cursor:pointer;border:2px solid var(--color-neutral-400);padding:8px 14px;border-radius:999px;font:600 12px/1 var(--font-body);color:var(--color-neutral-700)" style-hover="border-color:var(--color-accent);color:var(--color-accent-700)" onClick="{{ p.onClick }}">{{ p.label }}</button>
+        </sc-for>
+      </div>
+      <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:20px 28px;font:900 clamp(14px,1.9cqw,17px)/1 var(--font-heading);letter-spacing:.12em;width:max-content" style-hover="background:var(--color-accent-600)" onClick="{{ goCheck }}">CHECK IF IT'S FIXABLE &#8594;</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isEnd }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;padding:clamp(24px,5cqw,56px) clamp(20px,4cqw,48px);display:flex;flex-direction:column;gap:20px">
+      <div style="border:2px dashed var(--color-neutral-500);padding:clamp(22px,4cqw,40px);display:flex;flex-direction:column;gap:14px">
+        <div style="font:900 11px/1 var(--font-heading);letter-spacing:.16em;color:var(--color-accent-700)">NOT IN THIS ROUND</div>
+        <div style="font:900 clamp(22px,4cqw,38px)/.96 var(--font-heading);text-transform:uppercase">Repairability check &#8594; recommendation &#8594; repair vs. replace</div>
+        <div style="font:500 14px/1.45 var(--font-body);color:var(--color-neutral-700);max-width:52ch">This round covers the template gallery and the upload, scan and damage-overlay flow. The remaining screens follow the same components.</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:16px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-accent-600)" onClick="{{ goHome }}">BACK TO HOME</button>
+        <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:16px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ goGallery }}">TEMPLATE GALLERY</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isCheck }}">
+    <div style="container-type:inline-size;animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both">
+      <div style="{{ statusBand }}">
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+          <div style="{{ statusMark }}">{{ statusIcon }}</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font:900 11px/1 var(--font-heading);letter-spacing:.2em;opacity:.7">WORTH FIXING?</div>
+            <div style="font:900 clamp(28px,6cqw,64px)/.92 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">{{ statusLabel }}</div>
+          </div>
+        </div>
+        <div style="font:500 clamp(15px,2cqw,20px)/1.35 var(--font-body);max-width:40ch;margin-top:20px">{{ statusLine }}</div>
+      </div>
+      <div style="padding:clamp(20px,3.5cqw,40px);display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <button style="{{ fixStyle }}" onClick="{{ goProduct }}">{{ fixLabel }}</button>
+          <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:18px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ goUpload }}">TRY ANOTHER PHOTO</button>
+        </div>
+        <div style="border-top:2px solid var(--color-divider);padding-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+          <span style="font:800 10px/1 var(--font-heading);letter-spacing:.18em;color:var(--color-neutral-600)">DEMO STATES</span>
+          <sc-for list="{{ statePills }}" as="s" hint-placeholder-count="3">
+            <button style="{{ s.style }}" onClick="{{ s.onClick }}">{{ s.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isProduct }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div style="position:relative;aspect-ratio:1/1;background:var(--color-neutral-200);border-right:2px solid var(--color-text)">
+        <image-slot id="{{ productSlot }}" shape="rect" fit="contain" placeholder="Drop the LOCTITE product photo"></image-slot>
+        <div style="position:absolute;left:0;bottom:0;background:var(--color-accent);color:#fff;padding:10px 14px;font:900 11px/1 var(--font-heading);letter-spacing:.16em;pointer-events:none">USE THIS</div>
+      </div>
+      <div style="container-type:inline-size;padding:clamp(22px,4cqw,44px);display:flex;flex-direction:column;gap:20px">
+        <div style="font:800 11px/1.4 var(--font-heading);letter-spacing:.18em;color:var(--color-neutral-600)">YOUR ITEM: {{ itemTitleUpper }} &#183; {{ detectLabel }}</div>
+        <h2 style="margin:0;font:900 clamp(26px,7cqw,52px)/.92 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">LOCTITE Super Glue Gel</h2>
+        <div style="font:500 clamp(15px,2.4cqw,19px)/1.35 var(--font-body);color:var(--color-neutral-700)">Best documented match for this application.</div>
+        <button style="all:unset;cursor:pointer;width:max-content;border:2px solid var(--color-text);padding:12px 20px;font:900 12px/1 var(--font-heading);letter-spacing:.16em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ toggleWhy }}">{{ whyLabel }}</button>
+        <sc-if value="{{ whyOpen }}">
+          <div style="display:flex;flex-direction:column;gap:10px;border-left:4px solid var(--color-accent);padding:4px 0 4px 16px;animation:lqRise .26s ease both">
+            <div style="font:700 14px/1.3 var(--font-body)">&#10003; Material match &#8212; rubber + fabric</div>
+            <div style="font:700 14px/1.3 var(--font-body)">&#10003; Application match &#8212; flexible bond, vertical surface</div>
+            <div style="font:700 14px/1.3 var(--font-body)">&#10003; Documented use &#8212; from product data</div>
+          </div>
+        </sc-if>
+        <div style="border:2px solid var(--color-divider);padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;gap:12px;font:800 10px/1.3 var(--font-heading);letter-spacing:.16em"><span style="color:var(--color-neutral-600)">SIMULATION TIMER</span><span>10 SEC (ON-SCREEN DEMO)</span></div>
+          <div style="height:2px;background:var(--color-divider)"></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;font:800 10px/1.3 var(--font-heading);letter-spacing:.16em"><span style="color:var(--color-neutral-600)">REAL PRODUCT INFO</span><span style="text-align:right">RUBBER-TOUGHENED &#183; NO-DRIP GEL</span></div>
+          <div style="font:500 11px/1.4 var(--font-body);color:var(--color-neutral-600)">Fixture and full cure times get wired from real product data &#8212; not shown until then.</div>
+        </div>
+        <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:20px 28px;font:900 clamp(14px,2.4cqw,17px)/1 var(--font-heading);letter-spacing:.12em;width:max-content" style-hover="background:var(--color-accent-600)" onClick="{{ goGuide }}">SHOW ME HOW &#8594;</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isGuide }}">
+    <div style="container-type:inline-size;animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both">
+      <div style="display:flex;gap:2px;background:var(--color-text);border-bottom:2px solid var(--color-text);overflow-x:auto">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+          <button style="{{ s.style }}" onClick="{{ s.onClick }}"><span style="opacity:.55">{{ s.n }}</span> {{ s.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+        <div style="position:relative;aspect-ratio:4/3;background:var(--color-neutral-200);border-right:2px solid var(--color-text)">
+          <image-slot id="{{ guideSlot }}" shape="rect" fit="cover" placeholder="{{ guidePh }}"></image-slot>
+          <sc-if value="{{ showRing }}">
+            <svg viewBox="0 0 100 75" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
+              <ellipse cx="46" cy="55" rx="26" ry="12" fill="none" stroke="#ec3013" stroke-width="1.1" vector-effect="non-scaling-stroke" style="animation:lqRing 2.4s ease-in-out infinite;transform-origin:46px 55px"></ellipse>
+            </svg>
+          </sc-if>
+          <div style="position:absolute;top:0;left:0;background:var(--color-text);color:var(--color-bg);padding:8px 12px;font:900 10px/1 var(--font-heading);letter-spacing:.16em;pointer-events:none">STEP {{ stepN }} / 4</div>
+        </div>
+        <div style="container-type:inline-size;padding:clamp(22px,4cqw,44px);display:flex;flex-direction:column;gap:20px">
+          <h2 style="margin:0;font:900 clamp(24px,6.5cqw,46px)/.94 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">{{ stepTitle }}</h2>
+          <div style="font:500 clamp(15px,2.4cqw,19px)/1.35 var(--font-body);color:var(--color-neutral-700);max-width:34ch">{{ stepBlurb }}</div>
+          <div style="display:flex;flex-direction:column;gap:2px;background:var(--color-divider)">
+            <sc-for list="{{ stepBullets }}" as="b" hint-placeholder-count="3">
+              <div style="background:var(--color-bg);padding:14px 0;display:flex;align-items:center;gap:12px;font:800 13px/1.2 var(--font-heading);letter-spacing:.06em"><span style="width:8px;height:8px;background:var(--color-accent);flex:none"></span>{{ b.t }}</div>
+            </sc-for>
+          </div>
+          <button style="{{ stepCtaStyle }}" onClick="{{ stepCta }}">{{ stepCtaLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isValue }}">
+    <div style="container-type:inline-size;animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both">
+      <div style="padding:clamp(20px,3.5cqw,42px) clamp(20px,4cqw,44px) 0;font:900 clamp(18px,3.4cqw,34px)/1.05 var(--font-heading);letter-spacing:-.01em;text-transform:uppercase;max-width:24ch">Don't throw it yet. It may be cheaper to repair.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:clamp(20px,3cqw,34px);border-top:2px solid var(--color-text);border-bottom:2px solid var(--color-text)">
+        <div style="container-type:inline-size;padding:clamp(22px,4cqw,40px);border-right:2px solid var(--color-text)">
+          <div style="font:900 12px/1 var(--font-heading);letter-spacing:.2em;color:var(--color-neutral-600)">REPAIR</div>
+          <div style="font:900 clamp(46px,20cqw,120px)/.9 var(--font-heading);letter-spacing:-.04em;margin-top:12px">&#8369;180</div>
+          <div style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600);margin-top:10px">ESTIMATE</div>
+        </div>
+        <div style="container-type:inline-size;padding:clamp(22px,4cqw,40px);background:var(--color-neutral-200)">
+          <div style="font:900 12px/1 var(--font-heading);letter-spacing:.2em;color:var(--color-neutral-600)">REPLACE</div>
+          <div style="font:900 clamp(46px,20cqw,120px)/.9 var(--font-heading);letter-spacing:-.04em;margin-top:12px;color:var(--color-accent)">&#8369;3,499</div>
+          <div style="font:700 11px/1 var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600);margin-top:10px">COMPARABLE ITEM</div>
+        </div>
+      </div>
+      <div style="background:var(--color-accent);color:#fff;padding:clamp(20px,3.5cqw,40px) clamp(20px,4cqw,44px);display:flex;flex-wrap:wrap;align-items:baseline;gap:14px">
+        <span style="font:900 clamp(13px,2cqw,18px)/1 var(--font-heading);letter-spacing:.16em">YOU COULD SAVE</span>
+        <span style="font:900 clamp(34px,9cqw,76px)/.9 var(--font-heading);letter-spacing:-.03em">&#8369;3,319</span>
+      </div>
+      <div style="padding:clamp(20px,3.5cqw,40px) clamp(20px,4cqw,44px);display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:14px 20px;font:900 11px/1 var(--font-heading);letter-spacing:.16em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ toggleDetails }}">{{ detailsLabel }}</button>
+          <button style="all:unset;cursor:pointer;border:2px solid var(--color-neutral-400);padding:14px 20px;font:900 11px/1 var(--font-heading);letter-spacing:.16em;color:var(--color-neutral-700)" style-hover="border-color:var(--color-accent);color:var(--color-accent)">VIEW SOURCE &#8599;</button>
+        </div>
+        <sc-if value="{{ detailsOpen }}">
+          <div style="border:2px solid var(--color-divider);padding:18px;display:flex;flex-direction:column;gap:12px;animation:lqRise .26s ease both">
+            <div style="font:900 10px/1 var(--font-heading);letter-spacing:.18em;color:var(--color-neutral-600)">SIMILAR ITEMS FOUND &#183; DEMO DATA</div>
+            <sc-for list="{{ listings }}" as="l" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;gap:12px;border-top:2px solid var(--color-divider);padding-top:10px;font:700 13px/1.3 var(--font-body)"><span>{{ l.shop }}</span><span>{{ l.price }}</span></div>
+            </sc-for>
+            <div style="font:800 11px/1.4 var(--font-heading);letter-spacing:.14em">ESTIMATED MARKET RANGE: &#8369;3,299&#8211;&#8369;3,799</div>
+            <div style="font:500 12px/1.45 var(--font-body);color:var(--color-neutral-700)">Repair figure is a per-repair estimate, not the pack price. Real pricing gets wired in the build phase.</div>
+          </div>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:18px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-accent-600)" onClick="{{ goNear }}">FIND IT NEAR ME</button>
+          <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:18px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ goShop }}">BUY ONLINE</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isNear }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div style="position:relative;min-height:340px;border-right:2px solid var(--color-text);background:var(--color-neutral-300);background-image:repeating-linear-gradient(0deg,transparent 0 38px,rgba(32,30,29,.09) 38px 40px),repeating-linear-gradient(90deg,transparent 0 38px,rgba(32,30,29,.09) 38px 40px)">
+        <sc-for list="{{ pins }}" as="p" hint-placeholder-count="5">
+          <div style="{{ p.style }}">{{ p.n }}</div>
+        </sc-for>
+        <div style="position:absolute;left:0;top:0;background:var(--color-text);color:var(--color-bg);padding:8px 12px;font:900 10px/1 var(--font-heading);letter-spacing:.16em">MAP &#183; DEMO / SIMULATED DATA</div>
+        <div style="position:absolute;left:16px;bottom:16px;background:var(--color-bg);border:2px solid var(--color-text);padding:10px 14px;font:900 10px/1 var(--font-heading);letter-spacing:.14em">YOU ARE HERE &#183; QUEZON CITY</div>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div style="padding:clamp(20px,3.5cqw,36px) clamp(20px,4cqw,36px) 14px;border-bottom:2px solid var(--color-text)">
+          <h2 style="margin:0;font:900 clamp(22px,4.4cqw,38px)/.96 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">Near you</h2>
+        </div>
+        <sc-for list="{{ stores }}" as="s" hint-placeholder-count="5">
+          <div style="border-bottom:2px solid var(--color-divider);padding:18px clamp(20px,4cqw,36px);display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+              <div style="font:900 15px/1.1 var(--font-heading);text-transform:uppercase">{{ s.name }}</div>
+              <div style="font:900 12px/1 var(--font-heading);letter-spacing:.1em;color:var(--color-accent)">{{ s.km }}</div>
+            </div>
+            <div style="font:500 12px/1.4 var(--font-body);color:var(--color-neutral-700)">{{ s.addr }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;font:800 10px/1 var(--font-heading);letter-spacing:.12em">
+              <span style="border:2px solid var(--color-divider);padding:6px 10px">{{ s.price }} &#183; SIM</span>
+              <span style="{{ s.stockStyle }}">{{ s.stock }}</span>
+              <span style="border:2px solid var(--color-divider);padding:6px 10px;color:var(--color-neutral-700)">{{ s.hours }}</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px">
+              <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:12px 16px;font:900 10px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-accent-600)">GET DIRECTIONS</button>
+              <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:12px 16px;font:900 10px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ goShop }}">BUY ONLINE</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isShop }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div style="position:relative;aspect-ratio:1/1;background:var(--color-neutral-200);border-right:2px solid var(--color-text)">
+        <image-slot id="{{ shopSlot }}" shape="rect" fit="contain" placeholder="Drop the LOCTITE pack shot"></image-slot>
+        <div style="position:absolute;top:0;left:0;background:var(--color-text);color:var(--color-bg);padding:8px 12px;font:900 10px/1 var(--font-heading);letter-spacing:.16em;pointer-events:none">PROTOTYPE / DEMO LISTING</div>
+      </div>
+      <div style="container-type:inline-size;padding:clamp(22px,4cqw,40px);display:flex;flex-direction:column;gap:16px">
+        <div style="font:900 11px/1 var(--font-heading);letter-spacing:.2em;color:var(--color-accent)">LOCTITE</div>
+        <h2 style="margin:0;font:900 clamp(22px,5.2cqw,40px)/.98 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">Super Glue Gel &#183; Ultra Gel Control</h2>
+        <div style="font:700 11px/1.4 var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">ID: PLACEHOLDER &#183; SIZE: 4G</div>
+        <div style="font:900 clamp(34px,9cqw,58px)/.9 var(--font-heading);letter-spacing:-.03em">&#8369;180</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;font:800 10px/1 var(--font-heading);letter-spacing:.12em">
+          <span style="border:2px solid var(--color-divider);padding:8px 12px">&#9733; 4.9 &#183; 1.2K SOLD</span>
+          <span style="border:2px solid var(--color-divider);padding:8px 12px">SELLER: DEMO STORE</span>
+          <span style="border:2px solid var(--color-divider);padding:8px 12px">SHIPPING: &#8369;49</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;border-top:2px solid var(--color-divider);padding-top:16px">
+          <span style="font:800 10px/1 var(--font-heading);letter-spacing:.16em;color:var(--color-neutral-600)">QTY</span>
+          <div style="display:flex;align-items:stretch;border:2px solid var(--color-text)">
+            <button style="all:unset;cursor:pointer;padding:10px 16px;font:900 14px/1 var(--font-heading)" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ dec }}">&#8722;</button>
+            <div style="padding:10px 18px;font:900 14px/1 var(--font-heading);border-left:2px solid var(--color-text);border-right:2px solid var(--color-text);min-width:24px;text-align:center">{{ qty }}</div>
+            <button style="all:unset;cursor:pointer;padding:10px 16px;font:900 14px/1 var(--font-heading)" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ inc }}">+</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:18px 24px;font:900 12px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-text);color:var(--color-bg)">ADD TO CART</button>
+          <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:18px 24px;font:900 12px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-accent-600)" onClick="{{ goShare }}">BUY NOW</button>
+        </div>
+        <div style="font:500 11px/1.45 var(--font-body);color:var(--color-neutral-600)">Prototype listing. Price, seller and stock are placeholders until real retailer data is connected.</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isShare }}">
+    <div style="animation:lqRise .4s cubic-bezier(.2,.8,.2,1) both;padding:clamp(22px,4cqw,44px);display:flex;flex-direction:column;align-items:center;gap:22px">
+      <div style="width:100%;max-width:330px;aspect-ratio:9/16;background:var(--color-accent);color:#fff;display:flex;flex-direction:column;border:2px solid var(--color-text)">
+        <div style="padding:20px;display:flex;flex-direction:column;gap:6px">
+          <div style="font:900 10px/1 var(--font-heading);letter-spacing:.24em;opacity:.8">LOCTITE PH</div>
+          <div style="font:900 30px/.92 var(--font-heading);letter-spacing:-.02em;text-transform:uppercase">I fixed it with LOCTITE &#128295;</div>
+        </div>
+        <div style="flex:1;position:relative;background:var(--color-neutral-800);margin:0 20px">
+          <image-slot id="{{ shareSlot }}" shape="rect" fit="cover" placeholder="Drop the after photo"></image-slot>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:900 18px/1 var(--font-heading);letter-spacing:.04em;text-transform:uppercase">Sneaker &#8212; sole repair</div>
+          <div style="font:700 10px/1 var(--font-heading);letter-spacing:.2em;opacity:.85">SAVED &#8369;3,319 &#183; DEMO</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+        <button style="all:unset;cursor:pointer;background:var(--color-text);color:var(--color-bg);padding:18px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-accent)">SHARE YOUR REPAIR</button>
+        <button style="all:unset;cursor:pointer;border:2px solid var(--color-text);padding:18px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-text);color:var(--color-bg)" onClick="{{ goHome }}">FIX SOMETHING ELSE</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isQuick }}">
+    <div style="container-type:inline-size;background:var(--color-neutral-900);color:var(--color-bg);animation:lqRise .35s cubic-bezier(.2,.8,.2,1) both">
+      <div style="padding:clamp(20px,3.5cqw,40px) clamp(20px,4cqw,40px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;border-bottom:2px solid var(--color-neutral-700)">
+        <div style="font:900 clamp(20px,4.4cqw,40px)/1 var(--font-heading);letter-spacing:-.01em;text-transform:uppercase">Quick fix</div>
+        <div style="background:var(--color-accent);color:#fff;padding:8px 12px;font:900 10px/1 var(--font-heading);letter-spacing:.16em">FASTEST PATH</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <div style="position:relative;aspect-ratio:4/3;background:var(--color-neutral-800);border-right:2px solid var(--color-neutral-700)">
+          <image-slot id="{{ quickSlot }}" shape="rect" fit="cover" placeholder="Drop the item photo"></image-slot>
+          <svg viewBox="0 0 100 75" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
+            <ellipse cx="46" cy="55" rx="26" ry="12" fill="none" stroke="#ec3013" stroke-width="1.2" vector-effect="non-scaling-stroke" style="animation:lqRing 2s ease-in-out infinite;transform-origin:46px 55px"></ellipse>
+          </svg>
+          <div style="position:absolute;left:0;bottom:0;background:var(--color-accent);color:#fff;padding:10px 14px;font:900 11px/1 var(--font-heading);letter-spacing:.14em;pointer-events:none">SOLE SEPARATION</div>
+        </div>
+        <div style="container-type:inline-size;padding:clamp(20px,4cqw,36px);display:flex;flex-direction:column;gap:18px">
+          <div style="font:900 10px/1 var(--font-heading);letter-spacing:.2em;color:var(--color-neutral-500)">USE THIS</div>
+          <div style="font:900 clamp(20px,5cqw,34px)/1 var(--font-heading);letter-spacing:-.01em;text-transform:uppercase">LOCTITE Super Glue Gel</div>
+          <div style="display:flex;flex-direction:column;gap:2px;background:var(--color-neutral-700)">
+            <div style="background:var(--color-neutral-900);padding:12px 0;font:800 12px/1.2 var(--font-heading);letter-spacing:.1em">WHAT DO I NEED? &#183; GLUE &#183; CLEAN CLOTH &#183; CLAMP OR WEIGHT</div>
+            <div style="background:var(--color-neutral-900);padding:12px 0;font:800 12px/1.2 var(--font-heading);letter-spacing:.1em">HOW DO I FIX IT? &#183; CLEAN &#183; THIN LINE &#183; PRESS &#183; WAIT</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <button style="all:unset;cursor:pointer;background:var(--color-accent);color:#fff;padding:16px 20px;font:900 11px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-accent-400)" onClick="{{ goNear }}">FIND IT NEAR ME</button>
+            <button style="all:unset;cursor:pointer;border:2px solid var(--color-bg);padding:16px 20px;font:900 11px/1 var(--font-heading);letter-spacing:.14em" style-hover="background:var(--color-bg);color:var(--color-neutral-900)" onClick="{{ goGuide }}">HOW TO FIX IT</button>
+            <button style="all:unset;cursor:pointer;border:2px solid var(--color-neutral-600);color:var(--color-neutral-400);padding:16px 20px;font:900 11px/1 var(--font-heading);letter-spacing:.14em" style-hover="border-color:var(--color-bg);color:var(--color-bg)" onClick="{{ goShop }}">BUY ONLINE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:860},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;gallery&quot;,&quot;expand&quot;,&quot;upload&quot;,&quot;scan&quot;,&quot;detect&quot;,&quot;correct&quot;,&quot;describe&quot;,&quot;end&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;filter&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;ALL&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;item&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;sneaker&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;damage&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;text&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;armed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;prefix&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;a&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;go&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(s: string) =&gt; void&quot;},&quot;setFilter&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(f: string) =&gt; void&quot;},&quot;setDamage&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(d: string) =&gt; void&quot;},&quot;setText&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(t: string) =&gt; void&quot;},&quot;setArmed&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(v: boolean) =&gt; void&quot;},&quot;openItem&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(id: string) =&gt; void&quot;}}">
+class Component extends DCLogic {
+  chip(on) {
+    return "all:unset;white-space:nowrap;padding:10px 18px;border-radius:999px;border:2px solid " +
+      (on ? "var(--color-accent)" : "var(--color-text)") + ";background:" + (on ? "var(--color-accent)" : "transparent") +
+      ";color:" + (on ? "#fff" : "var(--color-text)") +
+      ";font:900 11px/1 var(--font-heading);letter-spacing:.14em;cursor:pointer;transition:all .16s ease";
+  }
+  pill(on) {
+    return "all:unset;padding:14px 20px;border:2px solid " + (on ? "var(--color-accent)" : "var(--color-text)") +
+      ";background:" + (on ? "var(--color-accent)" : "transparent") + ";color:" + (on ? "#fff" : "var(--color-text)") +
+      ";font:900 12px/1 var(--font-heading);letter-spacing:.12em;cursor:pointer;transition:all .16s ease";
+  }
+  state = { slide: 0, why: false, step: 1, check: "ok", details: false, qty: 1 };
+  componentDidMount() {
+    this._i = setInterval(() => this.setState(st => ({ slide: (st.slide + 1) % 3 })), 3400);
+  }
+  componentWillUnmount() { clearInterval(this._i); }
+  checkVals() {
+    const c = this.state.check;
+    const S = {
+      ok:   { icon: "\u2713", label: "Suitable", line: "Sneaker + sole separation is a documented repair. Let's fix it.", bg: "#12855b", fix: "FIX IT" },
+      warn: { icon: "?",      label: "Need more information", line: "Try another photo, or tell us what's wrong.", bg: "#b26a00", fix: "TRY AGAIN" },
+      no:   { icon: "\u2715", label: "Not recommended", line: "We couldn't find a suitable LOCTITE repair for this.", bg: "#ec3013", fix: "DON'T FORCE IT" }
+    };
+    const cur = S[c] || S.ok;
+    const pill = (on) => "all:unset;cursor:pointer;padding:8px 12px;border:2px solid " + (on ? "var(--color-text)" : "var(--color-neutral-400)") +
+      ";background:" + (on ? "var(--color-text)" : "transparent") + ";color:" + (on ? "var(--color-bg)" : "var(--color-neutral-700)") +
+      ";font:800 10px/1 var(--font-heading);letter-spacing:.14em";
+    return {
+      statusIcon: cur.icon, statusLabel: cur.label, statusLine: cur.line,
+      statusBand: "background:" + cur.bg + ";color:#fff;padding:clamp(26px,5cqw,64px) clamp(20px,4cqw,44px)",
+      statusMark: "width:clamp(52px,9cqw,84px);height:clamp(52px,9cqw,84px);flex:none;border:3px solid #fff;display:grid;place-items:center;font:900 clamp(24px,4.4cqw,42px)/1 var(--font-heading)",
+      fixLabel: cur.fix,
+      fixStyle: "all:unset;cursor:pointer;background:" + (c === "ok" ? "var(--color-accent)" : "var(--color-neutral-400)") +
+        ";color:#fff;padding:18px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em",
+      statePills: [["ok","SUITABLE"],["warn","NEED MORE INFO"],["no","NOT RECOMMENDED"]].map(x => ({
+        label: x[1], style: pill(c === x[0]), onClick: () => this.setState({ check: x[0] })
+      }))
+    };
+  }
+  productVals(pre, item) {
+    return {
+      productSlot: pre + "-product",
+      itemTitleUpper: item.title.toUpperCase(),
+      whyOpen: this.state.why,
+      whyLabel: this.state.why ? "HIDE" : "WHY?",
+      toggleWhy: () => this.setState(st => ({ why: !st.why }))
+    };
+  }
+  guideVals(pre) {
+    const n = this.state.step;
+    const D = [
+      { t: "Where the damage is", b: "The sole has separated from the upper along the outer edge.",
+        bl: ["Outer edge, heel to midfoot", "Rubber to fabric bond", "No structural break"], ph: "Drop the damaged-area photo" },
+      { t: "Which LOCTITE to use", b: "Super Glue Gel — flexible, no-drip, holds on a vertical seam.",
+        bl: ["Rubber-toughened", "Gap-filling gel", "Water resistant"], ph: "Drop the product photo" },
+      { t: "How to apply it", b: "Clean, thin line, press. That's the whole job.",
+        bl: ["Clean and dry both faces", "Thin line along the seam", "Press and hold"], ph: "Drop the application photo" },
+      { t: "What to do next", b: "Keep it clamped, then leave it alone.",
+        bl: ["Clamp or weight it", "Wipe any squeeze-out", "Let it cure before wearing"], ph: "Drop the after photo" }
+    ];
+    const cur = D[n - 1];
+    const tab = (on) => "all:unset;cursor:pointer;white-space:nowrap;padding:14px 18px;background:" +
+      (on ? "var(--color-accent)" : "var(--color-bg)") + ";color:" + (on ? "#fff" : "var(--color-text)") +
+      ";font:900 10px/1 var(--font-heading);letter-spacing:.14em;flex:1 0 auto;text-transform:uppercase";
+    const last = n === 4;
+    return {
+      steps: D.map((d, i) => ({ n: "0" + (i + 1), label: d.t, style: tab(i + 1 === n), onClick: () => this.setState({ step: i + 1 }) })),
+      stepN: "0" + n, stepTitle: cur.t, stepBlurb: cur.b, stepBullets: cur.bl.map(t => ({ t })),
+      guideSlot: pre + "-guide-" + n, guidePh: cur.ph, showRing: n === 1,
+      stepCtaLabel: last ? "SEE WHAT REPLACING COSTS \u2192" : "NEXT STEP \u2192",
+      stepCtaStyle: "all:unset;cursor:pointer;background:" + (last ? "var(--color-accent)" : "var(--color-text)") +
+        ";color:#fff;padding:18px 26px;font:900 13px/1 var(--font-heading);letter-spacing:.14em;width:max-content",
+      stepCta: () => last ? this.props.go("value") : this.setState({ step: n + 1 })
+    };
+  }
+  shopVals(pre) {
+    const q = this.state.qty;
+    return {
+      shopSlot: pre + "-shop", shareSlot: pre + "-share", quickSlot: pre + "-quick", qty: q,
+      inc: () => this.setState({ qty: q + 1 }), dec: () => this.setState({ qty: Math.max(1, q - 1) }),
+      detailsOpen: this.state.details, detailsLabel: this.state.details ? "HIDE THE DETAIL" : "HOW WE GOT THESE NUMBERS",
+      toggleDetails: () => this.setState(st => ({ details: !st.details })),
+      listings: [{ shop: "Shop A", price: "\u20b13,299" }, { shop: "Shop B", price: "\u20b13,499" }, { shop: "Shop C", price: "\u20b13,799" }],
+      pins: [[24,30],[52,22],[38,58],[68,64],[80,38]].map((c, i) => ({
+        n: i + 1,
+        style: "position:absolute;left:" + c[0] + "%;top:" + c[1] + "%;transform:translate(-50%,-50%);width:30px;height:30px;background:var(--color-accent);color:#fff;display:grid;place-items:center;font:900 12px/1 var(--font-heading);border:2px solid var(--color-text)"
+      })),
+      stores: [
+        { name: "Ace Hardware", km: "0.8 KM", addr: "Ground floor, mall complex, Quezon Ave.", price: "\u20b1180", stock: "IN STOCK", hours: "10AM\u20139PM" },
+        { name: "Handyman", km: "1.4 KM", addr: "Level 2, retail center, Commonwealth Ave.", price: "\u20b1175", stock: "IN STOCK", hours: "10AM\u201310PM" },
+        { name: "True Value", km: "2.1 KM", addr: "Hardware wing, Katipunan Ave.", price: "\u20b1195", stock: "LOW STOCK", hours: "9AM\u20138PM" },
+        { name: "Watsons", km: "2.6 KM", addr: "Corner unit, Aurora Blvd.", price: "\u20b1189", stock: "CHECK STORE", hours: "9AM\u201310PM" },
+        { name: "Neighborhood hardware", km: "3.3 KM", addr: "Barangay road, near market.", price: "\u20b1170", stock: "CHECK STORE", hours: "7AM\u20137PM" }
+      ].map(x => ({ ...x, stockStyle: "padding:6px 10px;border:2px solid " + (x.stock === "IN STOCK" ? "#12855b" : "#b26a00") +
+        ";color:" + (x.stock === "IN STOCK" ? "#12855b" : "#b26a00") }))
+    };
+  }
+  renderVals() {
+    const p = this.props, s = p.screen || "home", f = p.filter || "ALL", pre = p.prefix || "a";
+    const sl = this.state.slide;
+    const cats = ["ALL","STUDENT","FASHION","COSPLAY","CREATOR","TECH","ENGINEERING","CAMPUS","HOME","MOTOR"];
+    const T = [
+      { id:"sneaker", title:"Sneaker Rescue", cat:"STUDENT", note:"Sole separation, loose trim, split seam", ph:"Drop a sneaker photo" },
+      { id:"cosplay", title:"Cosplay Prop", cat:"COSPLAY", note:"EVA foam, snapped armor piece, loose detail", ph:"Drop a cosplay prop photo" },
+      { id:"bag", title:"Bag & Strap", cat:"FASHION", note:"Torn strap anchor, lifted trim, split panel", ph:"Drop a bag photo" },
+      { id:"phone", title:"Phone Case", cat:"TECH", note:"Cracked corner, broken clip, loose grip", ph:"Drop a phone case photo" },
+      { id:"print3d", title:"3D Print", cat:"ENGINEERING", note:"Layer split, snapped mount, loose insert", ph:"Drop a 3D print photo" },
+      { id:"backpack", title:"Backpack", cat:"CAMPUS", note:"Detached buckle, torn strap base, split zip pull", ph:"Drop a backpack photo" },
+      { id:"frame", title:"Photo Frame", cat:"HOME", note:"Broken corner joint, loose backing, cracked trim", ph:"Drop a photo frame photo" },
+      { id:"moto", title:"Motor Accessory", cat:"MOTOR", note:"Loose fairing clip, cracked mount, trim piece", ph:"Drop a motorcycle part photo" }
+    ];
+    const M = [
+      { id:"slippers", title:"Slippers", cat:"STUDENT" }, { id:"idholder", title:"ID Holder", cat:"CAMPUS" },
+      { id:"pencase", title:"Pencil Case", cat:"STUDENT" }, { id:"wallet", title:"Wallet", cat:"FASHION" },
+      { id:"eyewear", title:"Eyewear", cat:"FASHION" }, { id:"mask", title:"Mask Accessory", cat:"COSPLAY" },
+      { id:"figurine", title:"Figurine", cat:"CREATOR" }, { id:"acrylic", title:"Acrylic Display", cat:"CREATOR" },
+      { id:"cable", title:"Cable Organizer", cat:"TECH" }, { id:"keyboard", title:"Keycap / Keyboard", cat:"TECH" },
+      { id:"robot", title:"Robotics Part", cat:"ENGINEERING" }, { id:"model", title:"Model Assembly", cat:"ENGINEERING" },
+      { id:"drawer", title:"Drawer Part", cat:"HOME" }, { id:"decor", title:"Small Decor", cat:"HOME" },
+      { id:"carint", title:"Car Interior Trim", cat:"MOTOR" }, { id:"project", title:"School Project", cat:"CAMPUS" }
+    ];
+    const keep = (x) => f === "ALL" || x.cat === f;
+    const flag = T.filter(keep), mini = M.filter(keep);
+    const all = T.concat(M);
+    const count = (c) => c === "ALL" ? all.length : all.filter(x => x.cat === c).length;
+    const picked = !!p.picked && s === "gallery";
+    const card = (on, base) => base + ";border-right:2px solid " + (on ? "var(--color-accent)" : "var(--color-divider)") +
+      ";border-bottom:2px solid " + (on ? "var(--color-accent)" : "var(--color-divider)") +
+      ";cursor:pointer;transition:background .18s ease,border-color .18s ease;background:" + (on ? "var(--color-neutral-200)" : "var(--color-bg)");
+    const dmg = ["SOLE SEPARATION","BROKEN PART","LOOSE TRIM","CRACK","OTHER"];
+    const chosen = p.damage;
+    const found = all.filter(x => x.id === (p.item || "sneaker"))[0] || T[0];
+    const item = { note: "Cracks, snapped parts, loose trim", ph: "Drop a photo of the " + found.title.toLowerCase(), ...found };
+    const said = ["natanggal yung sole","nabali yung plastic","bumuka yung gilid","napigtas yung strap"];
+    return {
+      isHome: s === "home", isGallery: s === "gallery", isExpand: s === "expand", isUpload: s === "upload",
+      isScan: s === "scan", isDetect: s === "detect", isCorrect: s === "correct", isDescribe: s === "describe", isEnd: s === "end",
+      notHome: s !== "home",
+      armed: !!p.armed, arm: () => p.setArmed(true),
+      heroSlot1: pre + "-hero-1", heroSlot2: pre + "-hero-2", heroSlot3: pre + "-hero-3",
+      trackStyle: "position:absolute;inset:0;display:flex;width:300%;transform:translateX(-" + (sl * 33.3333) + "%);transition:transform .7s cubic-bezier(.65,0,.35,1)",
+      dots: [0,1,2].map(i => ({
+        style: "all:unset;cursor:pointer;width:" + (i === sl ? "26px" : "10px") + ";height:10px;background:" +
+          (i === sl ? "var(--color-accent)" : "rgba(255,255,255,.75)") + ";transition:all .3s ease",
+        onClick: () => this.setState({ slide: i })
+      })),
+      itemSlot: pre + "-" + item.id, itemTitle: item.title, itemCat: item.cat,
+      countLabel: flag.length + mini.length + " templates in " + (f === "ALL" ? "all communities" : f.toLowerCase()),
+      hasPick: picked, clearPick: () => p.setPicked(false), itemPh: item.ph || "Drop the item photo",
+      chips: cats.map(c => ({ label: c + " \u00b7 " + count(c), style: this.chip(c === f), onClick: () => p.setFilter(c) })),
+      flagships: flag.map(t => {
+        const on = picked && t.id === item.id;
+        return { ...t, slot: pre + "-" + t.id, onClick: () => p.openItem(t.id),
+          cardStyle: card(on, "background:var(--color-bg)"),
+          cta: on ? "SELECTED" : "START",
+          ctaStyle: "display:flex;align-items:center;gap:8px;margin-top:4px;font:900 11px/1 var(--font-heading);letter-spacing:.14em;color:" + (on ? "var(--color-text)" : "var(--color-accent-700)") };
+      }),
+      minis: mini.map(m => ({ ...m, onClick: () => p.openItem(m.id),
+        cardStyle: card(picked && m.id === item.id, "padding:16px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:120px") })),
+      damages: dmg.map(d => ({ label: d, style: this.pill(d === chosen), onClick: () => p.setDamage(d) })),
+      startStyle: "all:unset;cursor:" + (chosen ? "pointer" : "not-allowed") + ";opacity:" + (chosen ? "1" : ".45") +
+        ";background:var(--color-accent);color:#fff;padding:20px 28px;font:900 clamp(14px,1.9cqw,17px)/1 var(--font-heading);letter-spacing:.12em;width:max-content",
+      startHint: chosen ? "We'll highlight the damage on your photo next." : "Pick what happened to continue.",
+      detectLabel: chosen || "SOLE SEPARATION",
+      text: p.text || "",
+      setText: (e) => p.setText(e.target.value),
+      phrases: said.map(x => ({ label: '"' + x + '"', onClick: () => p.setText(x) })),
+      isCheck: s === "check", isProduct: s === "product", isGuide: s === "guide", isValue: s === "value",
+      isNear: s === "near", isShop: s === "shop", isShare: s === "share", isQuick: s === "quick",
+      ...this.checkVals(), ...this.productVals(pre, item), ...this.guideVals(pre), ...this.shopVals(pre),
+      goCheck: () => p.go("check"), goProduct: () => p.go("product"), goGuide: () => p.go("guide"),
+      goValue: () => p.go("value"), goNear: () => p.go("near"), goShop: () => p.go("shop"),
+      goShare: () => p.go("share"), goQuick: () => p.go("quick"),
+      goHome: () => p.go("home"), goGallery: () => p.go("gallery"), goUpload: () => p.go("upload"),
+      goScan: () => { p.setArmed(false); p.go("scan"); }, goDetect: () => { if (chosen) p.go("detect"); },
+      goCorrect: () => p.go("correct"), goDescribe: () => p.go("describe"), goEnd: () => p.go("end")
+    };
+  }
+}
+</script>
+</body>
+</html>

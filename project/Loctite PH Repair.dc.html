@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-4b87b5b6-a474-4247-85ca-a5e1d5d79e23/styles.css">
+<script src="_ds/modernist-4b87b5b6-a474-4247-85ca-a5e1d5d79e23/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+html, body { margin:0; background:#201e1d; }
+a { color:#ec3013; }
+a:hover { color:#ff6b52; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-neutral-900);font-family:var(--font-body);padding:0 0 40px">
+
+  <div style="position:sticky;top:0;z-index:40;background:var(--color-neutral-900)">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(16px,3vw,32px);border-bottom:2px solid var(--color-neutral-700)">
+    <div style="display:flex;align-items:baseline;gap:14px;color:var(--color-bg)">
+      <div style="font:900 12px/1 var(--font-heading);letter-spacing:.2em">LOCTITE PH &#183; REPAIR PLATFORM</div>
+      <div style="font:600 11px/1 var(--font-body);letter-spacing:.14em;color:var(--color-neutral-500)">VISUAL PROTOTYPE &#183; ROUND 1</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px;font:800 10px/1 var(--font-heading);letter-spacing:.16em;color:var(--color-neutral-500)">
+        STEP <span style="color:var(--color-bg)">{{ stepLabel }}</span>
+      </div>
+      <div style="display:flex;gap:2px;background:var(--color-neutral-700);padding:2px">
+        <sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+          <button style="{{ v.style }}" onClick="{{ v.onClick }}">{{ v.label }}</button>
+        </sc-for>
+      </div>
+      <button style="all:unset;cursor:pointer;border:2px solid var(--color-neutral-600);color:var(--color-bg);padding:8px 14px;font:800 10px/1 var(--font-heading);letter-spacing:.16em" style-hover="border-color:var(--color-accent);color:var(--color-accent)" onClick="{{ reset }}">RESTART FLOW</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:6px;overflow-x:auto;padding:10px clamp(16px,3vw,32px);border-bottom:2px solid var(--color-neutral-700)">
+    <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="12">
+      <button style="{{ j.style }}" onClick="{{ j.onClick }}">{{ j.label }}</button>
+    </sc-for>
+  </div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(16px,2.5vw,34px);padding:clamp(18px,3vw,38px)">
+    <sc-if value="{{ showDesktop }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1 1 720px;max-width:1240px;min-width:320px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;font:800 10px/1 var(--font-heading);letter-spacing:.18em;color:var(--color-neutral-500)">
+          <span>DESKTOP</span><span>{{ desktopNote }}</span>
+        </div>
+        <div style="border:2px solid var(--color-neutral-600);height:{{ frameH }}px;overflow:auto;background:var(--color-bg)">
+          <dc-import name="Loctite Screens" prefix="a" screen="{{ screen }}" filter="{{ filter }}" item="{{ item }}" damage="{{ damage }}" text="{{ text }}" picked="{{ picked }}" set-picked="{{ setPicked }}" armed="{{ armed }}" set-armed="{{ setArmed }}" go="{{ go }}" set-filter="{{ setFilter }}" set-damage="{{ setDamage }}" set-text="{{ setText }}" open-item="{{ openItem }}" hint-size="100%,900px"></dc-import>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showMobile }}">
+      <div style="flex:0 0 auto">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;font:800 10px/1 var(--font-heading);letter-spacing:.18em;color:var(--color-neutral-500)">
+          <span>MOBILE</span><span>390</span>
+        </div>
+        <div style="border:2px solid var(--color-neutral-600);width:390px;max-width:92vw;height:{{ frameH }}px;overflow:auto;background:var(--color-bg)">
+          <dc-import name="Loctite Screens" prefix="a" screen="{{ screen }}" filter="{{ filter }}" item="{{ item }}" damage="{{ damage }}" text="{{ text }}" picked="{{ picked }}" set-picked="{{ setPicked }}" armed="{{ armed }}" set-armed="{{ setArmed }}" go="{{ go }}" set-filter="{{ setFilter }}" set-damage="{{ setDamage }}" set-text="{{ setText }}" open-item="{{ openItem }}" hint-size="390px,900px"></dc-import>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="padding:0 clamp(18px,3vw,38px);color:var(--color-neutral-500);font:500 12px/1.5 var(--font-body);max-width:70ch">
+    Both frames drive one shared state, so clicking either one moves both. Every photo area is a drop slot &#8212; drag an image onto it and it sticks.
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;view&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;frameHeight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:880,&quot;min&quot;:520,&quot;max&quot;:1200,&quot;step&quot;:20,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { screen: "home", filter: "ALL", item: "sneaker", damage: "", text: "", view: null, armed: false, picked: false };
+  componentWillUnmount() { clearTimeout(this._t); }
+  go(s) {
+    clearTimeout(this._t);
+    this.setState({ screen: s });
+    if (s === "scan") this._t = setTimeout(() => this.setState({ screen: "detect" }), 1900);
+  }
+  renderVals() {
+    const st = this.state;
+    const view = st.view || this.props.view || "both";
+    const labels = { home:"01 HOME", gallery:"02 TEMPLATES", expand:"03 WHAT HAPPENED", upload:"03 UPLOAD", scan:"04 SCANNING", detect:"05 DAMAGE FOUND", correct:"05 CORRECT IT", describe:"06 DESCRIBE IT", check:"07 FIXABLE?", product:"08 USE THIS", guide:"09 HOW TO FIX", value:"10 REPAIR VS REPLACE", near:"11 NEAR YOU", shop:"12 BUY ONLINE", share:"13 SHARE", quick:"QUICK FIX", end:"NEXT" };
+    const vbtn = (on) => "all:unset;cursor:pointer;padding:8px 14px;font:800 10px/1 var(--font-heading);letter-spacing:.16em;background:" +
+      (on ? "var(--color-accent)" : "transparent") + ";color:" + (on ? "#fff" : "var(--color-neutral-400)");
+    const opts = [["both","BOTH"],["desktop","DESKTOP"],["mobile","MOBILE"]];
+    return {
+      screen: st.screen, filter: st.filter, item: st.item, damage: st.damage, text: st.text, armed: st.armed,
+      setArmed: (v) => this.setState({ armed: v }),
+      stepLabel: labels[st.screen] || "01 HOME",
+      frameH: this.props.frameHeight ?? 880,
+      desktopNote: st.screen === "gallery" ? "TEMPLATE GALLERY" : "RESPONSIVE",
+      showDesktop: view !== "mobile", showMobile: view !== "desktop",
+      views: opts.map(o => ({ label: o[1], style: vbtn(view === o[0]), onClick: () => this.setState({ view: o[0] }) })),
+      jumps: Object.keys(labels).map(k => ({
+        label: labels[k].replace(/^\d+\s/, ""),
+        style: "all:unset;cursor:pointer;white-space:nowrap;padding:7px 11px;font:800 9px/1 var(--font-heading);letter-spacing:.14em;border:2px solid " +
+          (st.screen === k ? "var(--color-accent)" : "var(--color-neutral-700)") + ";background:" +
+          (st.screen === k ? "var(--color-accent)" : "transparent") + ";color:" + (st.screen === k ? "#fff" : "var(--color-neutral-400)"),
+        onClick: () => this.go(k)
+      })),
+      go: (s) => this.go(s),
+      setFilter: (f) => this.setState({ filter: f }),
+      setDamage: (d) => this.setState({ damage: d }),
+      setText: (t) => this.setState({ text: t }),
+      picked: st.picked,
+      setPicked: (v) => this.setState({ picked: v }),
+      openItem: (id) => this.setState({ item: id, damage: "", picked: true, screen: "gallery" }),
+      reset: () => { clearTimeout(this._t); this.setState({ screen: "home", filter: "ALL", item: "sneaker", damage: "", text: "", armed: false, picked: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
