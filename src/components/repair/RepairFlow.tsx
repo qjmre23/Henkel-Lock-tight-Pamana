@@ -7,6 +7,7 @@ import { COMMUNITIES, TEMPLATES, getTemplateById } from "@/data/templates";
 import { matchProduct, checkRepairability } from "@/lib/recommend";
 import { getEstimatedRepairCostPHP } from "@/lib/pricing";
 import StoreMap from "@/components/repair/StoreMap";
+import { compressImageFile, readFileAsDataUrl } from "@/lib/image";
 import type {
   CommunityFilter, DamageAssessment, DamageType, MatchResult, RepairScreen,
   RepairVsReplace,
@@ -132,13 +133,24 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
   function onPickFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageDataUrl(reader.result as string);
-      setScreen("scan");
-      runScan(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    setScreen("scan");
+    setScanning(true);
+    setScanError(null);
+    // Downscale/re-encode before it ever leaves the browser -- raw phone
+    // camera photos can exceed the serverless function's payload limit and
+    // fail the AI call outright. compressImageFile() falls back to the raw
+    // file itself if compression fails for any reason.
+    compressImageFile(file)
+      .catch(() => readFileAsDataUrl(file))
+      .then((dataUrl) => {
+        setImageDataUrl(dataUrl);
+        runScan(dataUrl);
+      })
+      .catch(() => {
+        setScanning(false);
+        setScanError("Couldn't read the selected photo.");
+        setScreen("detect");
+      });
   }
 
   async function runScan(dataUrl: string) {
@@ -168,6 +180,28 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
           ? err.message
           : "Couldn't reach the detection service.";
       setScanError(message);
+      // Never leave `assessment` null here -- the rest of the flow (NOT QUITE,
+      // manual damage picker, free-text description, fixability check) all
+      // read/spread `assessment` and would silently break or dead-end without
+      // one. Build a placeholder the user can correct by hand instead.
+      setAssessment((prev) =>
+        prev ?? {
+          id: crypto.randomUUID(),
+          sessionId: "local-session",
+          object: "",
+          isRepairCandidate: true,
+          material: null,
+          damage: null,
+          damageType: null,
+          application: null,
+          confidence: 0,
+          damageRegion: null,
+          userText: null,
+          repairability: "NEED_MORE_INFO",
+          userConfirmed: false,
+          createdAt: new Date().toISOString(),
+        },
+      );
       setScreen("detect");
     } finally {
       clearTimeout(timeout);

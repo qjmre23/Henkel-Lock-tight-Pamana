@@ -53,9 +53,23 @@ export default function StoreMap({ stores }: { stores: MapStore[] }) {
           style: MAPBOX_STYLE,
           center: stores.length ? [stores[0].lng, stores[0].lat] : [121.0509, 14.6507],
           zoom: 12.5,
+          // The configured custom style (marwin2323/...) defaults to a near-90deg
+          // camera pitch (a "flyover" preset), which renders as a blank sky/
+          // horizon view in this small panel instead of a usable top-down map.
+          // Force a flat 2D top-down camera regardless of what the style ships.
+          pitch: 0,
+          bearing: 0,
+          projection: "mercator",
         });
         map.addControl(new mapboxgl.NavigationControl(), "top-right");
         map.on("load", () => !cancelled && setLoaded(true));
+        // Some custom "Standard"-family styles re-apply their own pitch/bearing
+        // once their style imports finish loading -- force it back to flat.
+        map.on("style.load", () => {
+          if (cancelled) return;
+          map.setPitch(0);
+          map.setBearing(0);
+        });
         map.on("error", (e) => !cancelled && setError(e?.error?.message || "Map failed to load."));
 
         const bounds = new mapboxgl.LngLatBounds();
