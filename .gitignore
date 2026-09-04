@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local build verification scratch (temp distDir override, never committed)
 .next-verify/
+
+# scratch: candidate product images downloaded for manual review, never committed
+_img_preview/

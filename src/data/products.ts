@@ -160,6 +160,7 @@ export const PRODUCTS: Product[] = [
   // ────────────────────── INDUSTRIAL — FULLY DOCUMENTED ──────────────────────
   {
     id: "loctite-401",
+    imageUrl: "https://oaktreeproductscom-2.azureedge.net/img/product/40140_1-B.jpg?fv=A7BC52577C8D200EE17A1AAB66BFB763",
     name: "LOCTITE 401",
     productId: "BP000000153529",
     family: "Instant adhesives",
@@ -188,6 +189,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "loctite-4902",
+    imageUrl: "https://www.mcmaster.com/prerenderstable/mvPRE/Contents/gfx/ImageCache/747/74795a73p2-b05-digital@2x_637046103105924531.png",
     name: "LOCTITE 4902",
     productId: "Loctite4902",
     family: "Instant adhesives",
@@ -214,6 +216,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "loctite-243",
+    imageUrl: "https://tameson.com/cdn/shop/files/243-005-loctite_00.e98f8934.jpg?v=1729914285",
     name: "LOCTITE 243",
     productId: "BP000000316211",
     family: "Threadlockers",
