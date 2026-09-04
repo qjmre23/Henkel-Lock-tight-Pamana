@@ -125,40 +125,101 @@ async function safely<T>(fn: () => Promise<T | null>): Promise<T | null> {
   }
 }
 
-/** Best-effort fetch of a listing page's og:image (or twitter:image) meta tag.
- *  Never throws -- returns null on any failure (timeout, non-HTML, no tag, etc).
- *  This is how listings get a real "found online" photo without ever inventing one. */
+/** Pulls a product image out of a page's <head> meta tags (og:image,
+ *  twitter:image, itemprop="image") OR, failing that, a schema.org Product
+ *  JSON-LD block (<script type="application/ld+json">) -- e-commerce SEO
+ *  pages very often carry structured Product data with an "image" field even
+ *  when the visible page itself is a JS-rendered shell without plain meta
+ *  tags, so JSON-LD is what actually surfaces a real photo for a lot of
+ *  Shopee/Lazada-style listings that simple og:image scraping misses. */
+function extractProductImage(html: string, baseUrl: string): string | null {
+  const metaPatterns = [
+    /<meta[^>]+property=["']og:image(?::secure_url)?["'][^>]+content=["']([^"']+)["']/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image(?::secure_url)?["']/i,
+    /<meta[^>]+name=["']twitter:image(?::src)?["'][^>]+content=["']([^"']+)["']/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image(?::src)?["']/i,
+    /<meta[^>]+itemprop=["']image["'][^>]+content=["']([^"']+)["']/i,
+  ];
+  for (const pattern of metaPatterns) {
+    const m = html.match(pattern);
+    if (m?.[1]) {
+      try {
+        return new URL(m[1], baseUrl).toString();
+      } catch {
+        // fall through to try other patterns / JSON-LD
+      }
+    }
+  }
+
+  // Fallback: schema.org Product structured data. There may be several
+  // JSON-LD blocks on the page (breadcrumbs, org info, etc.) -- scan all of
+  // them for one that looks like a Product with an image.
+  const ldBlocks = html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
+  for (const block of ldBlocks) {
+    try {
+      const parsed: unknown = JSON.parse(block[1].trim());
+      const candidates = Array.isArray(parsed) ? parsed : [parsed];
+      for (const node of candidates) {
+        if (!node || typeof node !== "object") continue;
+        const obj = node as Record<string, unknown>;
+        const type = obj["@type"];
+        const isProduct = type === "Product" || (Array.isArray(type) && type.includes("Product"));
+        if (!isProduct) continue;
+        const img = obj.image;
+        const imageUrl = typeof img === "string" ? img
+          : Array.isArray(img) && typeof img[0] === "string" ? img[0]
+          : img && typeof img === "object" && typeof (img as Record<string, unknown>).url === "string" ? (img as Record<string, unknown>).url as string
+          : null;
+        if (imageUrl) {
+          try {
+            return new URL(imageUrl, baseUrl).toString();
+          } catch {
+            continue;
+          }
+        }
+      }
+    } catch {
+      continue; // malformed JSON-LD -- skip this block, try the next
+    }
+  }
+  return null;
+}
+
+/** Best-effort fetch of a listing page's product photo (see extractProductImage).
+ *  Never throws -- returns null on any failure (timeout, non-HTML, no image
+ *  found, etc). This is how listings get a real "found online" photo without
+ *  ever inventing one. Uses a crawler-style User-Agent because e-commerce
+ *  sites commonly serve full server-rendered metadata to known social/search
+ *  crawlers specifically so link previews work, even when a regular browser
+ *  UA gets a mostly-empty JS-rendered shell. */
 async function fetchListingImage(url: string): Promise<string | null> {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    const timeout = setTimeout(() => controller.abort(), 7000);
     const res = await fetch(url, {
       signal: controller.signal,
       redirect: "follow",
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; LoctitePHRepairBot/1.0)" },
+      headers: { "User-Agent": "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)" },
     });
     clearTimeout(timeout);
     if (!res.ok) return null;
     const contentType = res.headers.get("content-type") ?? "";
     if (!contentType.includes("text/html")) return null;
-    // Only read the first chunk -- og:image is always in <head>, no need to buffer the whole page.
+    // JSON-LD Product blocks can sit anywhere in the document (not just
+    // <head>), so read a generous chunk of the page rather than stopping at
+    // </head> -- capped so one slow/huge page can't stall the request.
     const reader = res.body?.getReader();
     if (!reader) return null;
     let html = "";
     const decoder = new TextDecoder();
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 60; i++) {
       const { done, value } = await reader.read();
       if (done) break;
       html += decoder.decode(value, { stream: true });
-      if (html.length > 60000 || /<\/head>/i.test(html)) break;
+      if (html.length > 250000) break;
     }
     reader.cancel().catch(() => {});
-    const og = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-      ?? html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i)
-      ?? html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i);
-    const imageUrl = og?.[1];
-    if (!imageUrl) return null;
-    return new URL(imageUrl, url).toString();
+    return extractProductImage(html, url);
   } catch {
     return null;
   }

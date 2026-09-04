@@ -822,16 +822,16 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
       {/* ───────────────────────── SHARE ───────────────────────── */}
       {screen === "share" && (
         <div className="p-6 sm:p-11 flex flex-col items-center gap-6">
-          <div className="w-full max-w-[330px] aspect-[9/16] bg-accent text-white flex flex-col border-2 border-text">
-            <div className="p-5 flex flex-col gap-1.5">
+          <div className="w-full max-w-[330px] aspect-[9/16] bg-accent text-white flex flex-col border-2 border-text overflow-hidden">
+            <div className="p-5 flex flex-col gap-1.5 flex-none">
               <div className="font-heading font-black text-[10px] tracking-[0.24em] opacity-80">LOCTITE PH</div>
               <div className="font-heading font-black text-[28px] leading-[.92] uppercase tracking-[-0.02em]">I fixed it with LOCTITE &#128295;</div>
             </div>
-            <div className="flex-1 relative bg-neutral-800 mx-5">
+            <div className="flex-1 relative bg-neutral-800 mx-5 min-h-0">
               {imageDataUrl && <img src={imageDataUrl} alt="Repaired item" className="w-full h-full object-cover" />}
             </div>
-            <div className="p-5 flex flex-col gap-2">
-              <div className="font-heading font-black text-lg tracking-[0.04em] uppercase">{assessment?.object || picked?.title} &mdash; {(assessment?.damage || "repair").toLowerCase()}</div>
+            <div className="p-5 flex flex-col gap-2 flex-none overflow-hidden">
+              <div className="font-heading font-black text-lg tracking-[0.04em] uppercase leading-tight line-clamp-2">{assessment?.object || picked?.title} &mdash; {(assessment?.damage || "repair").toLowerCase()}</div>
               {rvr?.potentialSavingsPHP != null && <div className="font-heading font-extrabold text-[10px] tracking-[0.2em] opacity-85">SAVED &#8369;{rvr.potentialSavingsPHP} &middot; DEMO</div>}
               {match?.product && (
                 <div className="flex items-center gap-2.5 mt-1 border-t border-white/25 pt-2.5">
@@ -840,7 +840,7 @@ export default function RepairFlow({ initialScreen }: { initialScreen?: string }
                   ) : (
                     <span className="w-8 h-8 flex-none bg-white/15 border border-white/40" aria-hidden />
                   )}
-                  <div className="font-heading font-black text-[10px] tracking-[0.16em] opacity-90">FIXED WITH {match.product.name.toUpperCase()}</div>
+                  <div className="font-heading font-black text-[10px] tracking-[0.16em] opacity-90 line-clamp-1">FIXED WITH {match.product.name.toUpperCase()}</div>
                 </div>
               )}
             </div>

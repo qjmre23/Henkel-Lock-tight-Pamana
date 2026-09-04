@@ -23,8 +23,15 @@ export interface MapStore {
   stock: "IN STOCK" | "LOW STOCK";
 }
 
-const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-const MAPBOX_STYLE = process.env.NEXT_PUBLIC_MAPBOX_STYLE || "mapbox://styles/mapbox/light-v11";
+// This is a Mapbox PUBLIC token (restricted to the mapbox-gl JS SDK, meant to
+// be embedded client-side -- see https://docs.mapbox.com/help/getting-started/access-tokens/,
+// "Public token" section), not a private/secret API key, so it's safe to
+// hard-code as the default here. process.env.NEXT_PUBLIC_MAPBOX_TOKEN still
+// overrides it when set (e.g. to swap in a different Mapbox account), but the
+// map no longer silently breaks if that env var isn't wired through on a given
+// deploy target.
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "pk.eyJ1IjoibWFyd2luMjMyMyIsImEiOiJjbXJ1bnVubWEwN3JvMnlxMGV3endvazhxIn0.aesPfHpcs5LOw_UIWogX2A";
+const MAPBOX_STYLE = process.env.NEXT_PUBLIC_MAPBOX_STYLE || "mapbox://styles/marwin2323/cmswv687u002u01so2xzd7mrs";
 
 export default function StoreMap({ stores }: { stores: MapStore[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
