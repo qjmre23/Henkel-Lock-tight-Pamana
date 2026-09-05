@@ -1,5 +1,12 @@
 # LOCTITE PH — Repair Platform
 
+
+https://github.com/user-attachments/assets/9373f8fd-e65e-4521-8f78-e033abc5d5b3
+
+
+
+
+
 An AI-guided repair platform for the Philippines that helps users determine if their broken items can be fixed using LOCTITE adhesives. This is a demo/prototype showcasing how Henkel's product knowledge can be combined with computer vision to provide localized repair guidance.
 
 ## 🎯 Overview
